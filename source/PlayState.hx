@@ -5109,6 +5109,7 @@ class PlayState extends MusicBeatState
 							#else
 							video.play(Paths.video('scary'));
 							video.onEndReached.add(function(){
+								video.dispose();
 								videoDone = true;
 								vidSpr.visible = false;
 								Sys.exit(0);
