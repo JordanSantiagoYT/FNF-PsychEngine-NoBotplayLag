@@ -8,6 +8,7 @@ import flixel.util.FlxColor;
 import flash.display.BitmapData;
 import editors.ChartingState;
 import flixel.util.FlxPool;
+import flixel.math.FlxRect;
 
 using StringTools;
 
