@@ -2637,13 +2637,15 @@ class PlayState extends MusicBeatState
 			if (ratio != 1)
 			{
 				for (note in notes){
-				 	if (note == null) 
-						continue;
+					if (songSpeedTween != null)
+						songSpeedTween.cancel();
+
 					note.resizeByRatio(ratio);
 				}
 				for (note in unspawnNotes){
-				 	if (note == null) 
-						continue;
+					if (songSpeedTween != null)
+						songSpeedTween.cancel();
+
 					note.resizeByRatio(ratio);
 				}				
 			}
