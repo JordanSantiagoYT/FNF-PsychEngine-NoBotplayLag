@@ -10,7 +10,6 @@ import discord_rpc.DiscordRpc;
 import llua.Lua;
 import llua.State;
 #end
-import states.MainMenuState;
 
 using StringTools;
 
