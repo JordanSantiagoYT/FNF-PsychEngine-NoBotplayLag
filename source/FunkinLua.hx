@@ -283,7 +283,7 @@ class FunkinLua {
 		#end
 
 			#if (!flash && MODS_ALLOWED && sys)
-			return initLuaShader(name, #if !android glslVersion #end);
+			return initLuaShader(name, glslVersion);
 			#else
 			luaTrace("initLuaShader: Platform unsupported for Runtime Shaders!", false, false, FlxColor.RED);
 			#end
