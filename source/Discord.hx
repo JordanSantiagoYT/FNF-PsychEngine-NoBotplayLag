@@ -78,7 +78,7 @@ class DiscordClient {
 			state: state,
 			largeImageKey: 'icon',
 			largeImageText: "FNF NO BOTLAG PSYCH Engine version: "
-			+ MainMenuState.psychEngineVersion
+			+ MainMenuState.psychEngineVersion,
 			smallImageKey: smallImageKey,
 			// Obtained times are in milliseconds so they are divided so Discord can use it
 			startTimestamp: Std.int(startTimestamp / 1000),

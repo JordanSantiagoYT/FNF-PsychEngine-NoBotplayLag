@@ -404,6 +404,10 @@ class DialogueCharacterEditorState extends MusicBeatState
 		tab_group.add(scaleStepper);
 		tab_group.add(noAntialiasingCheckbox);
 
+		var reloadImageButton:FlxButton = new FlxButton(10, scaleStepper.y + 60, "Reload Image", function() {
+			reloadCharacter();
+		});
+
 		#if !android
 		var loadButton:FlxButton = new FlxButton(reloadImageButton.x + 100, reloadImageButton.y, "Load Character", function() {
 			loadCharacter();
@@ -412,6 +416,9 @@ class DialogueCharacterEditorState extends MusicBeatState
 			saveCharacter();
 		});
 		#else
+		var loadButton:FlxButton = new FlxButton(reloadImageButton.x + 120, reloadImageButton.y, "Load Character", function() {
+			loadCharacter();
+		});
 		var saveButton:FlxButton = new FlxButton(reloadImageButton.x + 100, reloadImageButton.y, "Save Character", function() {
 			saveCharacter();
 		});
@@ -576,10 +583,10 @@ class DialogueCharacterEditorState extends MusicBeatState
 			}
 
 			if (UI_mainbox.selected_tab_id == 'Animations'
-				&& currentlySelectedAnimation != null
-				&& character.dialogueAnimations.exists(currentlySelectedAnimation)) {
+				&& curSelectedAnim != null
+				&& character.dialogueAnimations.exists(curSelectedAnim)) {
 				var moved:Bool = false;
-				var animationValue:DialogueAnimArray = character.dialogueAnimations.get(currentlySelectedAnimation);
+				var animationValue:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
 				var controlArrayLoop:Array<Bool> = [
 					#if !android FlxG.keys.justPressed.A #else virtualPad.buttonLeft.justPressed #end,
 					#if !android FlxG.keys.justPressed.W #else virtualPad.buttonUp.justPressed #end,
@@ -717,7 +724,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 			if(UI_mainbox.selected_tab_id == 'Character')
 			{
 				var negaMult:Array<Int> = [1, -1];
-				var controlAnimation:Array<Bool> = [
+				var controlAnim:Array<Bool> = [
 					#if !android FlxG.keys.justPressed.W #else virtualPad.buttonUp.justPressed #end,
 					#if !android FlxG.keys.justPressed.S #else virtualPad.buttonDown.justPressed #end
 				];
