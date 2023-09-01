@@ -266,13 +266,13 @@ class DialogueCharacterEditorState extends MusicBeatState
 				ghostIdle.playAnim(anim, true);
 
 				curSelectedAnim = anim;
-				var animShit:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
-				offsetLoopText.text = 'Loop: ' + animShit.loop_offsets;
-				offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
+				var animationValue:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
+				offsetLoopText.text = 'Loop: ' + animationValue.loop_offsets;
+				offsetIdleText.text = 'Idle: ' + animationValue.idle_offsets;
 
-				animationInputText.text = animShit.anim;
-				loopInputText.text = animShit.loop_name;
-				idleInputText.text = animShit.idle_name;
+				animationInputText.text = animationValue.anim;
+				loopInputText.text = animationValue.loop_name;
+				idleInputText.text = animationValue.idle_name;
 			}
 		});
 		
@@ -473,11 +473,11 @@ class DialogueCharacterEditorState extends MusicBeatState
 		character.playAnim(character.jsonFile.animations[0].anim);
 		if(character.jsonFile.animations.length > 0) {
 			curSelectedAnim = character.jsonFile.animations[0].anim;
-			var animShit:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
-			ghostLoop.playAnim(animShit.anim);
-			ghostIdle.playAnim(animShit.anim, true);
-			offsetLoopText.text = 'Loop: ' + animShit.loop_offsets;
-			offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
+			var animationValue:DialogueAnimArray = character.dialogueAnimations.get(curSelectedAnim);
+			ghostLoop.playAnim(animationValue.anim);
+			ghostIdle.playAnim(animationValue.anim, true);
+			offsetLoopText.text = 'Loop: ' + animationValue.loop_offsets;
+			offsetIdleText.text = 'Idle: ' + animationValue.idle_offsets;
 		}
 
 		curAnim = 0;
@@ -605,9 +605,9 @@ class DialogueCharacterEditorState extends MusicBeatState
 					for (i in 0...controlArrayLoop.length) {
 						if (controlArrayLoop[i]) {
 							if (i % 2 == 1) {
-								animShit.loop_offsets[1] += offsetAdd * negaMult[i];
+								animationValue.loop_offsets[1] += offsetAdd * negaMult[i];
 							} else {
-								animShit.loop_offsets[0] += offsetAdd * negaMult[i];
+								animationValue.loop_offsets[0] += offsetAdd * negaMult[i];
 							}
 							moved = true;
 						}
@@ -616,9 +616,9 @@ class DialogueCharacterEditorState extends MusicBeatState
 					for (i in 0...controlArrayIdle.length) {
 						if (controlArrayIdle[i]) {
 							if (i % 2 == 1) {
-								animShit.idle_offsets[1] += offsetAdd * negaMult[i];
+								animationValue.idle_offsets[1] += offsetAdd * negaMult[i];
 							} else {
-								animShit.idle_offsets[0] += offsetAdd * negaMult[i];
+								animationValue.idle_offsets[0] += offsetAdd * negaMult[i];
 							}
 							moved = true;
 						}
@@ -628,9 +628,9 @@ class DialogueCharacterEditorState extends MusicBeatState
 				for (i in 0...controlArrayLoop.length) {
 					if (controlArrayLoop[i]) {
 						if (i % 2 == 1) {
-							animShit.idle_offsets[1] += offsetAdd * negaMult[i];
+							animationValue.idle_offsets[1] += offsetAdd * negaMult[i];
 						} else {
-							animShit.idle_offsets[0] += offsetAdd * negaMult[i];
+							animationValue.idle_offsets[0] += offsetAdd * negaMult[i];
 						}
 						moved = true;
 					}
@@ -638,10 +638,10 @@ class DialogueCharacterEditorState extends MusicBeatState
 				#end
 
 				if(moved) {
-					offsetLoopText.text = 'Loop: ' + animShit.loop_offsets;
-					offsetIdleText.text = 'Idle: ' + animShit.idle_offsets;
-					ghostLoop.offset.set(animShit.loop_offsets[0], animShit.loop_offsets[1]);
-					ghostIdle.offset.set(animShit.idle_offsets[0], animShit.idle_offsets[1]);
+					offsetLoopText.text = 'Loop: ' + animationValue.loop_offsets;
+					offsetIdleText.text = 'Idle: ' + animationValue.idle_offsets;
+					ghostLoop.offset.set(animationValue.loop_offsets[0], animationValue.loop_offsets[1]);
+					ghostIdle.offset.set(animationValue.idle_offsets[0], animationValue.idle_offsets[1]);
 				}
 			}
 
