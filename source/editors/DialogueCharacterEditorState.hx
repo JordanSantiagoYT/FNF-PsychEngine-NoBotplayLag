@@ -416,10 +416,10 @@ class DialogueCharacterEditorState extends MusicBeatState
 			saveCharacter();
 		});
 		#else
-		var loadButton:FlxButton = new FlxButton(reloadImageButton.x + 120, reloadImageButton.y, "Load Character", function() {
+		var loadButton:FlxButton = new FlxButton(reloadImageButton.x + 100, reloadImageButton.y, "Load Character", function() {
 			loadCharacter();
 		});
-		var saveButton:FlxButton = new FlxButton(reloadImageButton.x + 100, reloadImageButton.y, "Save Character", function() {
+		var saveButton:FlxButton = new FlxButton(loadButton.x, reloadImageButton.y - 25, "Save Character", function() {
 			saveCharacter();
 		});
 		#end
@@ -605,9 +605,9 @@ class DialogueCharacterEditorState extends MusicBeatState
 					for (i in 0...controlArrayLoop.length) {
 						if (controlArrayLoop[i]) {
 							if (i % 2 == 1) {
-								animationValue.loop_offsets[1] += offsetAdd * negaMult[i];
+								animShit.loop_offsets[1] += offsetAdd * negaMult[i];
 							} else {
-								animationValue.loop_offsets[0] += offsetAdd * negaMult[i];
+								animShit.loop_offsets[0] += offsetAdd * negaMult[i];
 							}
 							moved = true;
 						}
@@ -616,9 +616,9 @@ class DialogueCharacterEditorState extends MusicBeatState
 					for (i in 0...controlArrayIdle.length) {
 						if (controlArrayIdle[i]) {
 							if (i % 2 == 1) {
-								animationValue.idle_offsets[1] += offsetAdd * negaMult[i];
+								animShit.idle_offsets[1] += offsetAdd * negaMult[i];
 							} else {
-								animationValue.idle_offsets[0] += offsetAdd * negaMult[i];
+								animShit.idle_offsets[0] += offsetAdd * negaMult[i];
 							}
 							moved = true;
 						}
@@ -628,9 +628,9 @@ class DialogueCharacterEditorState extends MusicBeatState
 				for (i in 0...controlArrayLoop.length) {
 					if (controlArrayLoop[i]) {
 						if (i % 2 == 1) {
-							animationValue.idle_offsets[1] += offsetAdd * negaMult[i];
+							animShit.idle_offsets[1] += offsetAdd * negaMult[i];
 						} else {
-							animationValue.idle_offsets[0] += offsetAdd * negaMult[i];
+							animShit.idle_offsets[0] += offsetAdd * negaMult[i];
 						}
 						moved = true;
 					}

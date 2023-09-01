@@ -6,6 +6,7 @@ import Sys.sleep;
 #if desktop
 import discord_rpc.DiscordRpc;
 #end
+  
 #if LUA_ALLOWED
 import llua.Lua;
 import llua.State;
@@ -18,7 +19,7 @@ class DiscordClient {
 
 	public function new() {
 		#if desktop
-		trace("Discord Client it's starting...");
+		trace("Discord Client is starting...");
 		DiscordRpc.start({
 			clientID: "1059518348196597831",
 			onReady: onReady,
@@ -32,23 +33,30 @@ class DiscordClient {
 			#if sys
 			sleep(2);
 			#end
+			//trace("Discord Client Update");
 		}
 
 		DiscordRpc.shutdown();
 		#end
 	}
-
-	public static function shutdown() {
+	
+	public static function shutdown()
+	{
+		#if desktop
 		DiscordRpc.shutdown();
+		#end
 	}
-
-	static function onReady() {
+	
+	static function onReady()
+	{
+		#if desktop
 		DiscordRpc.presence({
 			details: "In the Menus",
 			state: null,
 			largeImageKey: 'icon',
 			largeImageText: "SB Engine"
 		});
+		#end
 	}
 
 	static function onError(_code:Int, _message:String) {
@@ -73,8 +81,9 @@ class DiscordClient {
 		if (endTimestamp > 0) {
 			endTimestamp = startTimestamp + endTimestamp;
 		}
-
-		DiscordRpc.presence({details: details,
+		#if desktop
+		DiscordRpc.presence({
+			details: details,
 			state: state,
 			largeImageKey: 'icon',
 			largeImageText: "FNF NO BOTLAG PSYCH Engine version: "
@@ -84,6 +93,7 @@ class DiscordClient {
 			startTimestamp: Std.int(startTimestamp / 1000),
 			endTimestamp: Std.int(endTimestamp / 1000)
 		});
+		#end
 
 		trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
