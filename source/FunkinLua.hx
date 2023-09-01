@@ -272,12 +272,18 @@ class FunkinLua {
 			else return false;
 		});
 
+    #if !android
 		// shader shit
 		Lua_helper.add_callback(lua, "initLuaShader", function(name:String, glslVersion:Int = 120) {
 			if(!ClientPrefs.shaders) return false;
+			#else
+		// shader shit
+		Lua_helper.add_callback(lua, "initLuaShader", function(name:String, glslVersion:Int = 100) {
+			if(!ClientPrefs.shaders) return false;
+		#end
 
 			#if (!flash && MODS_ALLOWED && sys)
-			return initLuaShader(name, glslVersion);
+			return initLuaShader(name, #if !android glslVersion #end);
 			#else
 			luaTrace("initLuaShader: Platform unsupported for Runtime Shaders!", false, false, FlxColor.RED);
 			#end
@@ -2989,8 +2995,12 @@ class FunkinLua {
 		return null;
 	}
 	#end
-	
+
+  #if !android
 	function initLuaShader(name:String, ?glslVersion:Int = 120)
+	#else
+	function initLuaShader(name:String, ?glslVersion:Int = 100)
+	#end
 	{
 		if(!ClientPrefs.shaders) return false;
 
