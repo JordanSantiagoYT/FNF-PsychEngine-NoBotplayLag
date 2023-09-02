@@ -156,7 +156,7 @@ class Main extends Sprite {
 		Sys.println(errorMessage);
 		Sys.println("Crash dump saved in " + Path.normalize(path));
 
-		Application.current.window.alert(errorMessage, "Error! SB Engine v" + MainMenuState.PsychEngineVersion);
+		Application.current.window.alert(errorMessage, "Error! JS Engine v" + MainMenuState.psychEngineJSVersion);
 		#if desktop
 		DiscordClient.shutdown();
 		#end
