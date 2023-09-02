@@ -36,7 +36,7 @@ class Main extends Sprite {
 	var game = {
 		width: 1280,
 		height: 720,
-		initialState: TitleState,
+		initialState: MainMenuState,
 		zoom: -1.0,
 		framerate: 60,
 		skipSplash: false,
@@ -86,8 +86,7 @@ class Main extends Sprite {
 		SUtil.doTheCheck();
 
 		ClientPrefs.loadDefaultKeys();
-		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate,
-			game.skipSplash, game.startFullscreen));
+		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
@@ -133,7 +132,7 @@ class Main extends Sprite {
 		dateNow = dateNow.replace(" ", "_");
 		dateNow = dateNow.replace(":", "'");
 
-		path = SUtil.getPath() + "crash/" + "PsychEngine Engine_" + dateNow + ".log";
+		path = SUtil.getPath() + "crash/" + "JSEngine Engine_" + dateNow + ".log";
 
 		for (stackItem in callStack) {
 			switch (stackItem) {
