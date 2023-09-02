@@ -90,7 +90,7 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
-		#if cpp 
+		#if !android
 		Gc.enable(true);
 		#end
 
@@ -134,7 +134,7 @@ class Main extends Sprite
 		#end
 
 		inline function gc(?minor:Bool = false) {
-			#if cpp
+			#if !android
 			Gc.run(!minor);
 			if (!minor) Gc.compact();
 			//trace('${Gc.memInfo(0) / 1024 / 1024} MB NEEDED\n${Gc.memInfo(1) / 1024 / 1024} MB RESERVED\n${Gc.memInfo(2) / 1024 / 1024} MB IN USE');
@@ -144,6 +144,7 @@ class Main extends Sprite
 		}
 
 		//negates need for constant clearStored etc
+#if !android
 		FlxG.signals.preStateSwitch.add(() -> {
 			Paths.clearStoredMemory(true);
 			FlxG.sound.destroy(false);
@@ -154,6 +155,7 @@ class Main extends Sprite
 			Paths.clearUnusedMemory();
 			gc();
 		});
+	#end
 
 		#if html5
 		FlxG.autoPause = false;
