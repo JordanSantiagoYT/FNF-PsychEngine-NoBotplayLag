@@ -36,7 +36,7 @@ class Main extends Sprite {
 	var game = {
 		width: 1280,
 		height: 720,
-		initialState: TitleScreenState,
+		initialState: TitleState,
 		zoom: -1.0,
 		framerate: 60,
 		skipSplash: false,
@@ -94,7 +94,7 @@ class Main extends Sprite {
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		if (fpsVar != null) {
-			fpsVar.visible = backend.ClientPrefs.showFPS;
+			fpsVar.visible = ClientPrefs.showFPS;
 		}
 
 		FlxG.autoPause = false;
