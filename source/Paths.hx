@@ -66,9 +66,9 @@ class Paths
 
 	public static var dumpExclusions:Array<String> =
 	[
-		'assets/music/freakyMenu.$SOUND_EXT',
-		'assets/shared/music/breakfast.$SOUND_EXT',
-		'assets/shared/music/tea-time.$SOUND_EXT',
+		SUtil.getPath() + 'assets/music/freakyMenu.$SOUND_EXT',
+		SUtil.getPath() + 'assets/shared/music/breakfast.$SOUND_EXT',
+		SUtil.getPath() + 'assets/shared/music/tea-time.$SOUND_EXT',
 	];
 	/// haya I love you for the base cache dump I took to the max
 	public static function clearUnusedMemory() {
@@ -83,7 +83,6 @@ class Paths
 					FlxG.bitmap._cache.remove(key);
 					openfl.Assets.cache.removeBitmapData(key);
 					currentTrackedAssets.remove(key);
-
 					// and get rid of the object
 					obj.persist = false; // make sure the garbage collector actually clears it up
 					obj.destroyOnNoUse = true;
@@ -91,11 +90,13 @@ class Paths
 				}
 			}
 		}
-
 		// run the garbage collector for good measure lmfao
-		System.gc();
+			#if sys
+			openfl.system.System.gc();
+			#elseif cpp
+			cpp.vm.Gc.run();
+			#end
 	}
-
 	// define the locally tracked assets
 	public static var localTrackedAssets:Array<String> = [];
 	public static function clearStoredMemory(?cleanUnused:Bool = false) {
@@ -110,7 +111,6 @@ class Paths
 				obj.destroy();
 			}
 		}
-
 		// clear all sounds that are cached
 		for (key in currentTrackedSounds.keys()) {
 			if (!localTrackedAssets.contains(key)
@@ -187,7 +187,7 @@ class Paths
 
 	inline static public function json(key:String, ?library:String)
 	{
-		return getPath('data/$key.json', TEXT, library);
+		return getPath('data/' + key + '.json', TEXT, library);
 	}
 
 	inline static public function shaderFragment(key:String, ?library:String)
@@ -211,7 +211,7 @@ class Paths
 			return file;
 		}
 		#end
-		return 'assets/videos/$key.$VIDEO_EXT';
+		return SUtil.getPath() + 'assets/videos/$key.$VIDEO_EXT';
 	}
 	//Sound loading.
 	static public function sound(key:String, ?library:String):Sound
@@ -287,6 +287,7 @@ class Paths
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
 	static public function image(key:String, ?library:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
+		if (ClientPrefs.cacheOnGPU) {
 		var bitmap:BitmapData = null;
 		var file:String = null;
 
@@ -333,6 +334,35 @@ class Paths
 
 		trace('oh no its returning null NOOOO ($file)');
 		return null;
+		} else {
+		#if MODS_ALLOWED
+		var modKey:String = modsImages(key);
+		if(FileSystem.exists(modKey)) {
+			if(!currentTrackedAssets.exists(modKey)) {
+				var newBitmap:BitmapData = BitmapData.fromFile(modKey);
+				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, modKey);
+				newGraphic.persist = true;
+				currentTrackedAssets.set(modKey, newGraphic);
+			}
+			localTrackedAssets.push(modKey);
+			return currentTrackedAssets.get(modKey);
+		}
+		#end
+
+		var path = getPath('images/$key.png', IMAGE, library);
+		//trace(path);
+		if (OpenFlAssets.exists(path, IMAGE)) {
+			if(!currentTrackedAssets.exists(path)) {
+				var newGraphic:FlxGraphic = FlxG.bitmap.add(path, false, path);
+				newGraphic.persist = true;
+				currentTrackedAssets.set(path, newGraphic);
+			}
+			localTrackedAssets.push(path);
+			return currentTrackedAssets.get(path);
+		}
+		trace('oh no its returning null NOOOO (' + modKey + ')');
+		return null;
+		}
 	}
 
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
@@ -343,19 +373,19 @@ class Paths
 			return File.getContent(modFolders(key));
 		#end
 
-		if (FileSystem.exists(getPreloadPath(key)))
-			return File.getContent(getPreloadPath(key));
+		if (FileSystem.exists(SUtil.getPath() + getPreloadPath(key)))
+			return File.getContent(SUtil.getPath() + getPreloadPath(key));
 
 		if (currentLevel != null)
 		{
 			var levelPath:String = '';
 			if(currentLevel != 'shared') {
-				levelPath = getLibraryPathForce(key, currentLevel);
+				levelPath = SUtil.getPath() + getLibraryPathForce(key, currentLevel);
 				if (FileSystem.exists(levelPath))
 					return File.getContent(levelPath);
 			}
 
-			levelPath = getLibraryPathForce(key, 'shared');
+			levelPath = SUtil.getPath() + getLibraryPathForce(key, 'shared');
 			if (FileSystem.exists(levelPath))
 				return File.getContent(levelPath);
 		}
@@ -371,7 +401,7 @@ class Paths
 			return file;
 		}
 		#end
-		return 'assets/fonts/$key';
+		return SUtil.getPath() + 'assets/fonts/$key';
 	}
 
 	public static function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
@@ -433,25 +463,22 @@ class Paths
 		var sound:Sound = null;
 		var file:String = null;
 
-		#if MODS_ALLOWED
-		file = modsSounds(path, key);
-		if (currentTrackedSounds.exists(file))
-		{
-			localTrackedAssets.push(file);
-			return currentTrackedSounds.get(file);
-		}
-		else if (FileSystem.exists(file))
-		{
-			#if lime_vorbis
-			if (stream)
-				sound = Sound.fromAudioBuffer(AudioBuffer.fromVorbisFile(VorbisFile.fromFile(file)));
-			else
-			#end
-			sound = Sound.fromFile(file);
-		}
-		else
-		#end
-		{
+        #if MODS_ALLOWED
+        file = modsSounds(path, key);
+        if (currentTrackedSounds.exists(file)) {
+            localTrackedAssets.push(file);
+            return currentTrackedSounds.get(file);
+        } else if (FileSystem.exists(file)) {
+            #if lime_vorbis
+            if (stream)
+                sound = Sound.fromAudioBuffer(AudioBuffer.fromVorbisFile(VorbisFile.fromFile(file)));
+            else
+            #end
+            sound = Sound.fromFile(file);
+        }
+        else
+        #end
+        {
 			// I hate this so god damn much
 			var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 			file = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
@@ -517,7 +544,7 @@ class Paths
 	#if MODS_ALLOWED
 	//Loads mods.
 	inline static public function mods(key:String = '') {
-		return 'mods/' + key;
+		return SUtil.getPath() + 'mods/' + key;
 	}
 	//Loads fonts in mods/fonts.
 	inline static public function modsFont(key:String) {
@@ -576,7 +603,7 @@ class Paths
 				return fileToCheck;
 
 		}
-		return 'mods/' + key;
+		return SUtil.getPath() + 'mods/' + key;
 	}
 
 	public static var globalMods:Array<String> = [];
@@ -587,7 +614,7 @@ class Paths
 	static public function pushGlobalMods() // prob a better way to do this but idc
 	{
 		globalMods = [];
-		var path:String = 'modsList.txt';
+		var path:String = SUtil.getPath() + 'modsList.txt';
 		if(FileSystem.exists(path))
 		{
 			var list:Array<String> = CoolUtil.coolTextFile(path);

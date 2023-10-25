@@ -4,6 +4,8 @@ package options;
 import Discord.DiscordClient;
 #end
 import flash.text.TextField;
+import Note;
+import StrumNote;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -29,6 +31,11 @@ using StringTools;
 
 class VisualsUISubState extends BaseOptionsMenu
 {
+
+	var noteOptionID:Int = -1;
+	var notes:FlxTypedGroup<StrumNote>;
+	var notesTween:Array<FlxTween> = [];
+	var noteY:Float = 90;
 	public function new()
 	{
 		title = 'Visuals and UI';
@@ -44,6 +51,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		var option:Option = new Option('Opponent Note Splashes',
 			"If checked, opponent note hits will show particles.",
 			'oppNoteSplashes',
+			'bool',
+			true);
+		addOption(option);
+
+		var option:Option = new Option('Show NPS',
+			'If checked, the game will show your current NPS.',
+			'showNPS',
 			'bool',
 			true);
 		addOption(option);
@@ -85,9 +99,23 @@ class VisualsUISubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
+		var option:Option = new Option('Showcase Mode',
+			'If checked, hides all the UI elements except for the time bar and notes\nand enables Botplay.',
+			'showcaseMode',
+			'bool',
+			false);
+		addOption(option);
+
 		var option:Option = new Option('Show Maximum Score',
 			'If checked, the score text will show the highest score you can achieve\nif you were to have 100% accuracy throughout the song.',
 			'showMaxScore',
+			'bool',
+			true);
+		addOption(option);
+
+		var option:Option = new Option('Time Text Bounce',
+			'If checked, the time bar text will bounce on every beat hit.',
+			'timeBounce',
 			'bool',
 			true);
 		addOption(option);
@@ -106,12 +134,38 @@ class VisualsUISubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
+		/*
+		var option:Option = new Option('Cluttered UI',
+			'If checked, the UI will be cluttered with tons of unnecessary gameplay elements.',
+			'clutterUI',
+			'bool',
+			false);
+		addOption(option);
+		*/
+
+		var option:Option = new Option('Results Screen',
+			'If unchecked, the results screen will be skipped.',
+			'resultsScreen',
+			'bool',
+			true);
+		addOption(option);
+
 		var option:Option = new Option('Compact UI Numbers',
 			'If checked, Score, combo, misses and NPS will be compact.',
 			'compactNumbers',
 			'bool',
 			false);
 		addOption(option);
+
+		var option:Option = new Option('ScoreTxt Size: ',
+			"Sets the size of scoreTxt. Logically, higher values mean\nthe scoreTxt is bigger. If set to 0, then it will\nuse the default size for each HUD type.",
+			'scoreTxtSize',
+			'int',
+			'0');
+		addOption(option);
+
+		option.minValue = 0;
+		option.maxValue = 100;
 		
 		/* ignore this i was just making a joke about fnf's naughtiness option
 		var option:Option = new Option('Family Friendly Mode',
@@ -127,6 +181,13 @@ class VisualsUISubState extends BaseOptionsMenu
 			'colorQuants',
 			'bool',
 			false);
+		addOption(option);
+
+		var option:Option = new Option('Enable Note Colors',
+			'If unchecked, notes won\'t be able to use your currently set colors. \nI think this decreases loading time.',
+			'enableColorShader',
+			'bool',
+			true);
 		addOption(option);
 
 		var option:Option = new Option('Camera Note Movement',
@@ -227,7 +288,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'hudType',
 			'string',
 			'VS Impostor',
-			['VS Impostor', 'Kade Engine', 'Tails Gets Trolled V4', 'Dave & Bambi', 'Doki Doki+', 'Psych Engine', 'Leather Engine', 'Box Funkin', "Mic'd Up", 'JS Engine']);
+			['VS Impostor', 'Kade Engine', 'Tails Gets Trolled V4', 'Dave and Bambi', 'Doki Doki+', 'Psych Engine', 'Leather Engine', 'Box Funkin', "Mic'd Up", 'JS Engine']);
 		addOption(option);
 
 		var option:Option = new Option('Note Style:',
@@ -235,7 +296,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'noteStyleThing',
 			'string',
 			'Default',
-			['Default', 'VS Nonsense V2', 'VS AGOTI', 'Doki Doki+', 'TGT V4', 'DNB 3D']);
+			['Default', 'VS Nonsense V2', 'VS AGOTI', 'Doki Doki+', 'TGT V4', 'DNB 3D', 'Pink Circles']);
 		addOption(option);
 
 		var option:Option = new Option('BF Icon Style:',
@@ -259,7 +320,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'iconBounceType',
 			'string',
 			'Golden Apple',
-			['Golden Apple', 'Dave and Bambi', 'Old Psych', 'New Psych', 'VS Steve', 'Plank Engine']);
+			['Golden Apple', 'Dave and Bambi', 'Old Psych', 'New Psych', 'VS Steve', 'Plank Engine', 'Strident Crisis']);
 		addOption(option);
 
 		var option:Option = new Option('Note Splash Type:',
@@ -412,6 +473,13 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool',
 			true);
 		addOption(option);
+
+		var option:Option = new Option('Botplay Text Fading',
+			"If checked, the botplay text will do cool fading.",
+			'botTxtFade',
+			'bool',
+			true);
+		addOption(option);
 		
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",
@@ -445,6 +513,27 @@ class VisualsUISubState extends BaseOptionsMenu
 			'comboStacking',
 			'bool',
 			true);
+		addOption(option);
+
+		var option:Option = new Option('Show RAM Usage',
+			"If checked, the game will show your RAM usage.",
+			'showRamUsage',
+			'bool',
+			true);
+		addOption(option);
+
+		var option:Option = new Option('Show Peak RAM Usage',
+			"If checked, the game will show your maximum RAM usage.",
+			'showMaxRamUsage',
+			'bool',
+			true);
+		addOption(option);
+
+		var option:Option = new Option('Show Debug Info',
+			"If checked, the game will show additional debug info.\nNote: Turn on FPS Counter before using this!",
+			'debugInfo',
+			'bool',
+			false);
 		addOption(option);
 
 		var option:Option = new Option('NPS with Speed in Mind',

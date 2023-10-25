@@ -34,6 +34,7 @@ class PauseSubState extends MusicBeatSubstate
 	//var botplayText:FlxText;
 	public static var botplayLockout:Bool = false;
 	public static var inPause:Bool = false;
+	public static var requireRestart:Bool = false;
 
 	public static var songName:String = '';
 
@@ -41,6 +42,7 @@ class PauseSubState extends MusicBeatSubstate
 	{
 		super();
 		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
+		if(botplayLockout) menuItemsOG.remove('Toggle Botplay'); //you cant toggle it on MWAHAHAHAHAHA
 
 		if(PlayState.chartingMode)
 		{
@@ -54,7 +56,7 @@ class PauseSubState extends MusicBeatSubstate
 			}
 			menuItemsOG.insert(3 + num, 'End Song');
 			menuItemsOG.insert(4 + num, 'Toggle Practice Mode');
-			if (!botplayLockout) menuItemsOG.insert(5 + num, 'Toggle Botplay');
+			menuItemsOG.insert(5 + num, 'Toggle Botplay');
 		}
 		menuItems = menuItemsOG;
 
@@ -137,12 +139,22 @@ class PauseSubState extends MusicBeatSubstate
 
 		regenMenu();
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+
+		#if android
+		PlayState.chartingMode ? addVirtualPad(LEFT_FULL, A) : addVirtualPad(UP_DOWN, A);
+		addPadCamera();
+		#end
 	}
 
 	var holdTime:Float = 0;
 	var cantUnpause:Float = 0.1;
 	override function update(elapsed:Float)
 	{
+		if(requireRestart) {
+		menuItemsOG.remove('Resume'); //technically that's the logical thing to do
+		regenMenu();
+		requireRestart = false;
+		}
 		cantUnpause -= elapsed;
 		if (pauseMusic.volume < 0.5)
 			pauseMusic.volume += 0.01 * elapsed;
@@ -264,9 +276,12 @@ class PauseSubState extends MusicBeatSubstate
 				case 'Toggle Botplay':
 					PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
 					PlayState.changedDifficulty = true;
+					if (PlayState.instance.botplayTxt != null) 
+					{
 					PlayState.instance.botplayTxt.visible = PlayState.instance.cpuControlled;
 					PlayState.instance.botplayTxt.alpha = 1;
 					PlayState.instance.botplaySine = 0;
+					}
 				case "Options":
 					MusicBeatState.switchState(new OptionsState());
 					inPause = true;
@@ -365,7 +380,7 @@ class PauseSubState extends MusicBeatSubstate
 		}
 	}
 
-	function regenMenu():Void {
+	public function regenMenu():Void {
 		for (i in 0...grpMenuShit.members.length) {
 			var obj = grpMenuShit.members[0];
 			obj.kill();

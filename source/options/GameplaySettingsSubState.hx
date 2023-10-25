@@ -99,6 +99,8 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
+	if (ClientPrefs.comboScoreEffect)
+	{
 		var option:Option = new Option('Combo Mult Type:',
 			"What type of combo multiplier do you want?",
 			'comboMultiType',
@@ -106,6 +108,19 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'osu!',
 			['osu!', 'Voiid Chronicles']);
 		addOption(option);
+
+		var option:Option = new Option('Combo Mult Limit: ', //Name
+			'What should the Combo Multiplier Limit be? \n(Values over 10 will not have score saving)', //Description
+			'comboMultLimit', //Save data variable name
+			'float', //Variable type
+			5); //Default value
+		option.scrollSpeed = 2;
+		option.minValue = 1;
+		option.maxValue = 100;
+		option.changeValue = 0.1;
+		option.displayFormat = '%vX';
+		addOption(option);
+	}
 
 		var option:Option = new Option('Complex Accuracy',
 			"If checked, accuracy is MS-based instead of rating-based.",
@@ -134,6 +149,29 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'bool',
 			false);
 		addOption(option);
+
+		if (ClientPrefs.communityGameBot)
+		{
+		var option:Option = new Option('Max MS (CGBM)',
+			"How late can note hits be when CommunityGame Botplay Mode is enabled?",
+			'maxCGBMS',
+			'int',
+			45);
+		option.minValue = 0;
+		option.maxValue = 180;
+		option.displayFormat = '%v ms';
+		addOption(option);
+
+		var option:Option = new Option('Min MS (CGBM)',
+			"How early can note hits be when CommunityGame Botplay Mode is enabled?",
+			'minCGBMS',
+			'int',
+			-20);
+		option.minValue = -30;
+		option.maxValue = 0;
+		option.displayFormat = '%v ms';
+		addOption(option);
+		}
 
 		var option:Option = new Option('Beginning Sync',
 			"If checked, the game will resync the vocals for the first 500ms of a song.",
@@ -195,6 +233,13 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('0% Limit on Practice',
 			"If checked, the health will stay at 0% if you lose all health in Practice mode.",
 			'zeroHealthLimit',
+			'bool',
+			false);
+		addOption(option);
+
+		var option:Option = new Option('More Spammable Inputs',
+			'If checked, the input system is more spammable.',
+			'ezSpam',
 			'bool',
 			false);
 		addOption(option);
@@ -325,7 +370,8 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			10);
 		option.scrollSpeed = 5;
 		option.minValue = 2;
-		option.maxValue = 10;
+		option.maxValue = 20;
+		if (ClientPrefs.safeFrames > 10) option.displayFormat = '%v (Will not save)';
 		option.changeValue = 0.1;
 		addOption(option);
 

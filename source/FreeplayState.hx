@@ -20,6 +20,7 @@ import flixel.system.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import openfl.utils.Assets as OpenFlAssets;
+import flixel.util.FlxStringUtil; //for formatting the note count
 import WeekData;
 #if MODS_ALLOWED
 import sys.FileSystem;
@@ -43,6 +44,8 @@ class FreeplayState extends MusicBeatState
 	var lerpRating:Float = 0;
 	var intendedScore:Float = 0;
 	var intendedRating:Float = 0;
+	var requiredRamLoad:Float = 0;
+	var noteCount:Float = 0;
 
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 
@@ -215,16 +218,26 @@ class FreeplayState extends MusicBeatState
 		add(textBG);
 
 		#if PRELOAD_ALL
-		var leText:String = "Press SPACE to listen to the Song / Press CTRL to open the Gameplay Changers Menu / Press RESET to Reset your Score and Accuracy.";
+		#if android
+		var leText:String = "Press X to listen to the Song / Press C to open the Gameplay Changers Menu / Press Y to Reset your Score and Accuracy.";
 		var size:Int = 16;
 		#else
-		var leText:String = "Press CTRL to open the Gameplay Changers Menu / Press RESET to Reset your Score and Accuracy.";
+		var leText:String = "Press SPACE to listen to the Song / Press CTRL to open the Gameplay Changers Menu / Press RESET to Reset your Score and Accuracy.";
+		var size:Int = 16;
+		#end
+		#else
+		var leText:String = "Press C to open the Gameplay Changers Menu / Press Y to Reset your Score and Accuracy.";
 		var size:Int = 18;
 		#end
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
+
+		#if android
+		addVirtualPad(LEFT_FULL, A_B_C_X_Y_Z);
+		#end
+
 		super.create();
 	}
 
@@ -302,11 +315,11 @@ class FreeplayState extends MusicBeatState
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
 		var accepted = controls.ACCEPT;
-		var space = FlxG.keys.justPressed.SPACE;
-		var ctrl = FlxG.keys.justPressed.CONTROL;
+		var space = FlxG.keys.justPressed.SPACE #if android || virtualPad.buttonX.justPressed #end;
+		var ctrl = FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonC.justPressed #end;
 
 		var shiftMult:Int = 1;
-		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
+		if (FlxG.keys.pressed.SHIFT #if android || virtualPad.buttonZ.pressed #end) shiftMult = 3;
 
 		if(songs.length > 1)
 		{
@@ -359,11 +372,16 @@ class FreeplayState extends MusicBeatState
 
 		if(ctrl)
 		{
+			#if android
+			removeVirtualPad();
+			#end
 			persistentUpdate = false;
 			openSubState(new GameplayChangersSubstate());
 		}
 		else if(space)
 		{
+		requiredRamLoad = 0;
+		noteCount = 0;
 				function playSong() {
 				#if PRELOAD_ALL
 				destroyFreeplayVocals();
@@ -389,6 +407,14 @@ class FreeplayState extends MusicBeatState
 				iconArray[instPlaying].canBounce = true;
 				curPlaying = true;
 				#end
+
+				if (FlxG.keys.pressed.SHIFT #if android || virtualPad.buttonZ.pressed #end) {
+					for (section in PlayState.SONG.notes) {
+					noteCount += section.sectionNotes.length;
+					requiredRamLoad += 72872 * section.sectionNotes.length;
+					}
+					CoolUtil.coolError("There are " + FlxStringUtil.formatMoney(noteCount, false) + " notes in this chart!\nWith Show Notes turned on, you'd need " + formatCompactNumber(requiredRamLoad / 2) + " of ram to load this.", "JS Engine Chart Diagnosis");
+				}
 			}
 			function songJsonPopup() { //you pressed space, but the song's ogg files don't exist
 				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
@@ -410,10 +436,11 @@ class FreeplayState extends MusicBeatState
 				});
 			}
 			var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
+			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 			#if desktop
 			if(instPlaying != curSelected)
 			{
-				if(sys.FileSystem.exists(Paths.inst(poop + '/'  + poop)) || sys.FileSystem.exists(Paths.json(poop + '/' + poop)) || sys.FileSystem.exists(Paths.modsJson(poop + '/' + poop)))
+				if(sys.FileSystem.exists(Paths.inst(songLowercase + '/'  + poop)) || sys.FileSystem.exists(Paths.json(songLowercase + '/' + poop)) || sys.FileSystem.exists(Paths.modsJson(songLowercase + '/' + poop)))
 					playSong();
 				else
 					songJsonPopup();
@@ -421,7 +448,7 @@ class FreeplayState extends MusicBeatState
 			#else
 			if(instPlaying != curSelected)
 			{
-				if(OpenFlAssets.exists(Paths.inst(poop + '/' + poop)) || OpenFlAssets.exists(Paths.json(poop + '/' + poop)))
+				if(OpenFlAssets.exists(Paths.inst(songLowercase + '/' + poop)) || OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
 					playSong();
 				else
 					songJsonPopup();
@@ -458,7 +485,7 @@ class FreeplayState extends MusicBeatState
 
 			curPlaying = false;
 			
-			if (FlxG.keys.pressed.SHIFT){
+			if (FlxG.keys.pressed.SHIFT #if android || virtualPad.buttonZ.pressed #end) {
 				LoadingState.loadAndSwitchState(new ChartingState());
 			}else{
 				LoadingState.loadAndSwitchState(new PlayState());
@@ -478,8 +505,10 @@ class FreeplayState extends MusicBeatState
 				}
 			}
 		}
-		else if(controls.RESET)
-		{
+		else if (controls.RESET #if android || virtualPad.buttonY.justPressed #end) {
+			#if android
+			removeVirtualPad();
+			#end
 			persistentUpdate = false;
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));
@@ -515,6 +544,27 @@ class FreeplayState extends MusicBeatState
 		diffText.text = '< ' + CoolUtil.difficultyString() + ' >';
 		positionHighscore();
 	}
+
+    public static function formatCompactNumber(number:Float):String //this entire function is ai generated LMAO
+    {
+        var suffixes:Array<String> = [' bytes', ' KB', ' MB', ' GB', 'TB'];
+        var magnitude:Int = 0;
+        var num:Float = number;
+
+        while (num >= 1000.0 && magnitude < suffixes.length - 1)
+        {
+            num /= 1000.0;
+            magnitude++;
+        }
+
+        // Use the floor value for the compact representation
+        var compactValue:Float = Math.floor(num * 100) / 100;
+	if (compactValue <= 0.001) {
+		return "0"; //Return 0 if compactValue = null
+	} else {
+        	return compactValue + (magnitude == 0 ? "" : "") + suffixes[magnitude];
+	}
+    }
 
 	function changeSelection(change:Int = 0, playSound:Bool = true)
 	{

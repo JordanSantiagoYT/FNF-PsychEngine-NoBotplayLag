@@ -23,7 +23,11 @@ import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
 import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
+#if android
+import android.flixel.FlxButton;
+#else
 import flixel.ui.FlxButton;
+#end
 import flixel.ui.FlxSpriteButton;
 import openfl.net.FileReference;
 import openfl.events.Event;
@@ -200,6 +204,11 @@ class CharacterEditorState extends MusicBeatState
 
 		FlxG.mouse.visible = true;
 		reloadCharacterOptions();
+
+		#if android
+		addVirtualPad(LEFT_FULL, A_B_C_D_V_X_Y_Z);
+		addPadCamera();
+		#end
 
 		super.create();
 	}
@@ -514,6 +523,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.name = "Character";
 
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
+		imageInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
 		{
 			char.imageFile = imageInputText.text;
@@ -533,8 +543,15 @@ class CharacterEditorState extends MusicBeatState
 				getEvent(FlxUINumericStepper.CHANGE_EVENT, healthColorStepperG, null);
 				getEvent(FlxUINumericStepper.CHANGE_EVENT, healthColorStepperB, null);
 			});
+		/*
+		var changeCharArrowColor:FlxButton = new FlxButton(reloadImage.x - 30, reloadImage.y + 30, "Change Character's Arrow Colors", function()
+			{
+				LoadingState.loadAndSwitchState(new charArrowColorState());
+			});
+		*/
 
 		healthIconInputText = new FlxUIInputText(15, imageInputText.y + 35, 75, leHealthIcon.getCharacter(), 8);
+		healthIconInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
 
 		singDurationStepper = new FlxUINumericStepper(15, healthIconInputText.y + 45, 0.1, 4, 0, 999, 1);
 
@@ -614,8 +631,11 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.name = "Animations";
 
 		animationInputText = new FlxUIInputText(15, 85, 80, '', 8);
+		animationInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
 		animationNameInputText = new FlxUIInputText(animationInputText.x, animationInputText.y + 35, 150, '', 8);
+		animationNameInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
 		animationIndicesInputText = new FlxUIInputText(animationNameInputText.x, animationNameInputText.y + 40, 250, '', 8);
+		animationIndicesInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
 		animationNameFramerate = new FlxUINumericStepper(animationInputText.x + 170, animationInputText.y, 1, 24, 0, 240, 0);
 		animationLoopCheckBox = new FlxUICheckBox(animationNameInputText.x + 170, animationNameInputText.y - 1, null, null, "Should it Loop?", 100);
 
@@ -1045,7 +1065,7 @@ class CharacterEditorState extends MusicBeatState
 
 		#if MODS_ALLOWED
 		characterList = [];
-		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods(Paths.currentModDirectory + '/characters/'), Paths.getPreloadPath('characters/')];
+		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods(Paths.currentModDirectory + '/characters/'), SUtil.getPath() + Paths.getPreloadPath('characters/')];
 		for(mod in Paths.getGlobalMods())
 			directories.push(Paths.mods(mod + '/characters/'));
 		for (i in 0...directories.length) {
@@ -1114,7 +1134,7 @@ class CharacterEditorState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 
 		if(!charDropDown.dropPanel.visible) {
-			if (FlxG.keys.justPressed.ESCAPE) {
+			if (FlxG.keys.justPressed.ESCAPE #if android || FlxG.android.justReleased.BACK #end) {
 				if(goToPlayState) {
 					MusicBeatState.switchState(new PlayState());
 				} else {
@@ -1125,15 +1145,15 @@ class CharacterEditorState extends MusicBeatState
 				return;
 			}
 
-			if (FlxG.keys.justPressed.R) {
+			if (FlxG.keys.justPressed.R #if android || virtualPad.buttonZ.justPressed #end) {
 				FlxG.camera.zoom = 1;
 			}
 
-			if (FlxG.keys.pressed.E && FlxG.camera.zoom < 3) {
+			if (FlxG.keys.pressed.E #if android || virtualPad.buttonX.pressed #end && FlxG.camera.zoom < 3) {
 				FlxG.camera.zoom += elapsed * FlxG.camera.zoom;
 				if(FlxG.camera.zoom > 3) FlxG.camera.zoom = 3;
 			}
-			if (FlxG.keys.pressed.Q && FlxG.camera.zoom > 0.1) {
+			if (FlxG.keys.pressed.Q #if android || virtualPad.buttonY.pressed #end && FlxG.camera.zoom > 0.1) {
 				FlxG.camera.zoom -= elapsed * FlxG.camera.zoom;
 				if(FlxG.camera.zoom < 0.1) FlxG.camera.zoom = 0.1;
 			}
@@ -1156,12 +1176,12 @@ class CharacterEditorState extends MusicBeatState
 			}
 
 			if(char.animationsArray.length > 0) {
-				if (FlxG.keys.justPressed.W)
+				if (FlxG.keys.justPressed.W #if android || virtualPad.buttonV.justPressed #end)
 				{
 					curAnim -= 1;
 				}
 
-				if (FlxG.keys.justPressed.S)
+				if (FlxG.keys.justPressed.S #if android || virtualPad.buttonD.justPressed #end)
 				{
 					curAnim += 1;
 				}
@@ -1172,12 +1192,12 @@ class CharacterEditorState extends MusicBeatState
 				if (curAnim >= char.animationsArray.length)
 					curAnim = 0;
 
-				if (FlxG.keys.justPressed.S || FlxG.keys.justPressed.W || FlxG.keys.justPressed.SPACE)
+				if (FlxG.keys.justPressed.S #if android || virtualPad.buttonD.justPressed #end || FlxG.keys.justPressed.W || #if android virtualPad.buttonV.justPressed || #end FlxG.keys.justPressed.SPACE)
 				{
 					char.playAnim(char.animationsArray[curAnim].anim, true);
 					genBoyOffsets();
 				}
-				if (FlxG.keys.justPressed.T)
+				if (FlxG.keys.justPressed.T #if android || virtualPad.buttonA.justPressed #end)
 				{
 					char.animationsArray[curAnim].offsets = [0, 0];
 
@@ -1186,13 +1206,21 @@ class CharacterEditorState extends MusicBeatState
 					genBoyOffsets();
 				}
 
+				#if android
+				var controlArray:Array<Bool> = [virtualPad.buttonLeft.justPressed, virtualPad.buttonRight.justPressed, virtualPad.buttonUp.justPressed, virtualPad.buttonDown.justPressed];
+				#else
 				var controlArray:Array<Bool> = [FlxG.keys.justPressed.LEFT, FlxG.keys.justPressed.RIGHT, FlxG.keys.justPressed.UP, FlxG.keys.justPressed.DOWN];
+				#end //hopefully this fixes a weird issue where pressing any of the keys moves the character to the left by 1 pixel
 
 
 
 				for (i in 0...controlArray.length) {
 					if(controlArray[i]) {
+						#if android
+						var holdShift = virtualPad.buttonB.pressed;
+						#else
 						var holdShift = FlxG.keys.pressed.SHIFT;
+						#end
 						var multiplier = 1;
 						if (holdShift)
 							multiplier = 10;
@@ -1291,11 +1319,15 @@ class CharacterEditorState extends MusicBeatState
 
 		if (data.length > 0)
 		{
+			#if android
+			SUtil.saveContent(daAnim, ".json", data);
+			#else
 			_file = new FileReference();
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 			_file.save(data, daAnim + ".json");
+			#end
 		}
 	}
 

@@ -9,13 +9,15 @@ import flixel.math.FlxMath;
 import openfl.display._internal.stats.Context3DStats;
 import openfl.display._internal.stats.DrawCallContext;
 #end
+import flixel.FlxG;
 #if flash
 import openfl.Lib;
 #end
-
+import external.memory.Memory;
 #if openfl
 import openfl.system.System;
 #end
+import Main;
 
 /**
 	The FPS class provides an easy-to-use monitor to display
@@ -30,11 +32,14 @@ class FPS extends TextField
 	/**
 		The current frame rate, expressed using frames-per-second
 	**/
-	public var currentFPS(default, null):Int;
+	public static var instance:FPS;
+	public var currentFPS(default, null):Float;
 
-	@:noCompletion private var cacheCount:Int;
+	@:noCompletion private var cacheCount:Float;
 	@:noCompletion private var currentTime:Float;
 	@:noCompletion private var times:Array<Float>;
+
+	public static var mainThing:Main;
 
 	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
 	{
@@ -46,7 +51,7 @@ class FPS extends TextField
 		currentFPS = 0;
 		selectable = false;
 		mouseEnabled = false;
-		defaultTextFormat = new TextFormat("_sans", 14, color);
+		defaultTextFormat = new TextFormat("_sans", 12, color);
 		autoSize = LEFT;
 		multiline = true;
 		text = "FPS: ";
@@ -82,16 +87,21 @@ class FPS extends TextField
 
 		if (currentCount != cacheCount /*&& visible*/)
 		{
-			text = "FPS: " + currentFPS;
+			text = (ClientPrefs.showFPS ? "FPS: " + currentFPS : "");
 			var memoryMegas:Float = 0;
 			
-			#if openfl
-			memoryMegas = Math.abs(FlxMath.roundDecimal(System.totalMemory / 1000000, 1));
-			text += "\nMemory: " + memoryMegas + " MB";
-			#end
+			if (ClientPrefs.showRamUsage) text += "\nMemory: " + CoolUtil.formatBytes(Memory.getCurrentUsage()) + (ClientPrefs.showMaxRamUsage ? " / " + CoolUtil.formatBytes(Memory.getPeakUsage()) : "");
+
+			if (ClientPrefs.debugInfo) {
+				text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
+				if (FlxG.state.subState != null)
+					text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
+				text += "\nSystem: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
+				text += "\nText bitmaps generated: " + Main.textGenerations;
+			}
 
 			textColor = 0xFFFFFFFF;
-			if (memoryMegas > 3000 || currentFPS <= ClientPrefs.framerate / 2)
+			if (currentFPS <= ClientPrefs.framerate / 2)
 			{
 				textColor = 0xFFFF0000;
 			}

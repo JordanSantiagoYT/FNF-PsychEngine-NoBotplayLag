@@ -21,6 +21,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var colorQuants:Bool = false;
 	public static var panIntensity:Float = 1;
 	public static var noteSplashes:Bool = true;
+	public static var enableColorShader:Bool = true;
 	public static var cacheOnGPU:Bool = false;
 	public static var communityGameBot:Bool = false;
 	public static var noSyncing:Bool = false;
@@ -41,8 +42,16 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var moreMaxHP:Bool = false;
 	public static var songPercentage:Bool = true;
 	public static var autosaveInterval:Float = 5.0;
+	public static var noteMotionBlur:Bool = false;
+	public static var noteMBMult:Float = 1;
+	public static var comboMultLimit:Float = 5;
+	public static var minCGBMS:Int = 5;
+	public static var maxCGBMS:Int = 5;
 	public static var autosaveCharts:Bool = true;
 	public static var antiCheatEnable:Bool = false;
+	public static var showRamUsage:Bool = true;
+	public static var showMaxRamUsage:Bool = true;
+	public static var rainbowNotes:Bool = false;
 	public static var bfIconStyle:String = 'Default';
 	public static var noteStyleThing:String = 'Default';
 	public static var daMenuMusic:String = 'Mashup';
@@ -52,35 +61,43 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var opponentLightStrum:Bool = true;
 	public static var complexAccuracy:Bool = false;
 	public static var resyncType:String = 'Psych';
+	public static var scoreTxtSize:Int = 0;
 	public static var botLightStrum:Bool = true;
 	public static var violence:Bool = true;
 	public static var camZooms:Bool = true;
 	public static var showNotes:Bool = true;
 	public static var doubleGhost:Bool = true;
 	public static var songLoading:Bool = true;
+	public static var resultsScreen:Bool = true;
+	public static var botTxtFade:Bool = true;
 	public static var hideHud:Bool = false;
+	public static var debugInfo:Bool = false;
 	public static var hideScore:Bool = false;
 	public static var voiidTrollMode:Bool = false;
 	public static var compactNumbers:Bool = false;
+	public static var ezSpam:Bool = false;
 	public static var longFCName:Bool = false;
 	public static var holdNoteHits:Bool = false;
 	public static var comboScoreEffect:Bool = false;
+	public static var noGunsRNG:Bool = false;
 	public static var comboMultiType:String = 'osu!';
 	public static var noteOffset:Int = 0;
 	public static var arrowHSV:Array<Array<Int>> = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
 	public static var ghostTapping:Bool = true;
 	public static var communityGameMode:Bool = false;
 	public static var wrongCameras:Bool = false;
+	public static var pbRControls:Bool = false;
 	public static var shitGivesMiss:Bool = false;
 	public static var trollMaxSpeed:String = 'Medium';
 	public static var timebarShowSpeed:Bool = false;
 	public static var noteSpawnTime:Float = 1;
 	public static var dynamicSpawnTime:Bool = false;
 	public static var evenLessBotLag:Bool = false;
-	public static var progChartLoad:Bool = false;
+	public static var showcaseMode:Bool = false;
 	public static var oppNoteAlpha:Float = 0.65;
 	public static var lessBotLag:Bool = false;
 	public static var ratesAndCombo:Bool = false;
+	public static var showNPS:Bool = false;
 	public static var showMS:Bool = false;
 	public static var comboPopup:Bool = false;
 	public static var ratingCounter:Bool = false;
@@ -97,7 +114,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var smoothHealth:Bool = true;
 	public static var smoothHealthType:String = 'Golden Apple 1.5';
 	public static var rateNameStuff:String = 'Quotes';
-	public static var accuracyMod:String = 'Accurate';
+	public static var timeBounce:Bool = true;
 	public static var percentDecimals:Int = 2;
 	public static var healthGainType:String = 'Psych Engine';
 	public static var hitsoundType:String = 'osu!mania';
@@ -117,7 +134,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var healthBarAlpha:Float = 1;
 	public static var laneUnderlayAlpha:Float = 1;
 	public static var laneUnderlay:Bool = false;
-	public static var controllerMode:Bool = false;
+	public static var controllerMode:Bool = #if android true #else false #end;
 	public static var hitsoundVolume:Float = 0;
 	public static var pauseMusic:String = 'Tea Time';
 	public static var checkForUpdates:Bool = true;
@@ -207,13 +224,17 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		FlxG.save.data.noteSplashes = noteSplashes;
 		FlxG.save.data.oppNoteSplashes = oppNoteSplashes;
 		FlxG.save.data.songLoading = songLoading;
+		FlxG.save.data.debugInfo = debugInfo;
+		FlxG.save.data.scoreTxtSize = scoreTxtSize;
 		FlxG.save.data.lowQuality = lowQuality;
 		FlxG.save.data.shaders = shaders;
+		FlxG.save.data.ezSpam = ezSpam;
 		FlxG.save.data.evenLessBotLag = evenLessBotLag;
 		FlxG.save.data.framerate = framerate;
 		//FlxG.save.data.cursing = cursing;
 		//FlxG.save.data.violence = violence;
 		FlxG.save.data.progAudioLoad = progAudioLoad;
+		FlxG.save.data.noGunsRNG = noGunsRNG;
 		FlxG.save.data.camZooms = camZooms;
 		FlxG.save.data.daMenuMusic = daMenuMusic;
 		FlxG.save.data.maxSplashLimit = maxSplashLimit;
@@ -223,9 +244,16 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		FlxG.save.data.rateNameStuff = rateNameStuff;
 		FlxG.save.data.fasterChartLoad = fasterChartLoad;
 		FlxG.save.data.longFCName = longFCName;
+		FlxG.save.data.botTxtFade = botTxtFade;
+		FlxG.save.data.noteMotionBlur = noteMotionBlur;
+		FlxG.save.data.noteMBMult = noteMBMult;
 		FlxG.save.data.showNotes = showNotes;
 		FlxG.save.data.skipResultsScreen = skipResultsScreen;
-		FlxG.save.data.accuracyMod = accuracyMod;
+		FlxG.save.data.timeBounce = timeBounce;
+		FlxG.save.data.maxCGBMS = maxCGBMS;
+		FlxG.save.data.minCGBMS = minCGBMS;
+		FlxG.save.data.showRamUsage = showRamUsage;
+		FlxG.save.data.showMaxRamUsage = showMaxRamUsage;
 		FlxG.save.data.playerLightStrum = playerLightStrum;
 		FlxG.save.data.healthDisplay = healthDisplay;
 		FlxG.save.data.wrongCameras = wrongCameras;
@@ -234,15 +262,19 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		FlxG.save.data.comboScoreEffect = comboScoreEffect;
 		FlxG.save.data.comboMultiType = comboMultiType;
 		FlxG.save.data.charsAndBG = charsAndBG;
+		FlxG.save.data.pbRControls = pbRControls;
 		FlxG.save.data.doubleGhost = doubleGhost;
 		FlxG.save.data.bfIconStyle = bfIconStyle;
 		FlxG.save.data.noteStyleThing = noteStyleThing;
 		FlxG.save.data.antiCheatEnable = antiCheatEnable;
 		FlxG.save.data.randomBotplayText = randomBotplayText;
+		FlxG.save.data.showNPS = showNPS;
 		FlxG.save.data.startingSync = startingSync;
 		FlxG.save.data.noSyncing = noSyncing;
+		FlxG.save.data.resultsScreen = resultsScreen;
 		FlxG.save.data.instaRestart = instaRestart;
 		FlxG.save.data.percentDecimals = percentDecimals;
+		FlxG.save.data.comboMultLimit = comboMultLimit;
 		FlxG.save.data.iconBounceType = iconBounceType;
 		FlxG.save.data.cameraPanning = cameraPanning;
 		FlxG.save.data.panIntensity = panIntensity;
@@ -266,8 +298,10 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		FlxG.save.data.hudType = hudType;
 		FlxG.save.data.ratingCounter = ratingCounter;
 		FlxG.save.data.colorRatingHit = colorRatingHit;
+		FlxG.save.data.rainbowNotes = rainbowNotes;
 		FlxG.save.data.healthGainType = healthGainType;
 		FlxG.save.data.oppNoteAlpha = oppNoteAlpha;
+		FlxG.save.data.enableColorShader = enableColorShader;
 		FlxG.save.data.noPausing = noPausing;
 		FlxG.save.data.noteOffset = noteOffset;
 		FlxG.save.data.ratesAndCombo = ratesAndCombo;
@@ -309,7 +343,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		FlxG.save.data.comboOffset = comboOffset;
 		FlxG.save.data.achievementsMap = Achievements.achievementsMap;
 		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
-		FlxG.save.data.progChartLoad = progChartLoad;
+		FlxG.save.data.showcaseMode = showcaseMode;
 		FlxG.save.data.ratingOffset = ratingOffset;
 		FlxG.save.data.marvWindow = marvWindow;
 		FlxG.save.data.sickWindow = sickWindow;
@@ -354,6 +388,15 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		if(FlxG.save.data.flashing != null) {
 			flashing = FlxG.save.data.flashing;
 		}
+		if(FlxG.save.data.debugInfo != null) {
+			debugInfo = FlxG.save.data.debugInfo;
+		}
+ 		if(FlxG.save.data.scoreTxtSize != null) {
+			scoreTxtSize = FlxG.save.data.scoreTxtSize;
+		}
+		if(FlxG.save.data.ezSpam != null) {
+			ezSpam = FlxG.save.data.ezSpam;
+		}
 		if(FlxG.save.data.progAudioLoad != null) {
 			progAudioLoad = FlxG.save.data.progAudioLoad;
 		}
@@ -369,11 +412,26 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		if(FlxG.save.data.communityGameBot != null) {
 			communityGameBot = FlxG.save.data.communityGameBot;
 		}
+		if(FlxG.save.data.noGunsRNG != null) {
+			noGunsRNG = FlxG.save.data.noGunsRNG;
+		}
+		if(FlxG.save.data.showRamUsage != null) {
+			showRamUsage = FlxG.save.data.showRamUsage;
+		}
+		if(FlxG.save.data.showMaxRamUsage != null) {
+			showMaxRamUsage = FlxG.save.data.showMaxRamUsage;
+		}
 		if(FlxG.save.data.colorQuants != null) {
 			colorQuants = FlxG.save.data.colorQuants;
 		}
+		if(FlxG.save.data.pbRControls != null) {
+			pbRControls = FlxG.save.data.pbRControls;
+		}
 		if(FlxG.save.data.cameraPanning != null) {
 			cameraPanning = FlxG.save.data.cameraPanning;
+		}
+		if(FlxG.save.data.botTxtFade != null) {
+			botTxtFade = FlxG.save.data.botTxtFade;
 		}
 		if(FlxG.save.data.startingSync != null) {
 			startingSync = FlxG.save.data.startingSync;
@@ -399,6 +457,27 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		if(FlxG.save.data.resyncType != null) {
 			resyncType = FlxG.save.data.resyncType;
 		}
+		if(FlxG.save.data.rainbowNotes != null) {
+			rainbowNotes = FlxG.save.data.rainbowNotes;
+		}
+		if(FlxG.save.data.noteMotionBlur != null) {
+			noteMotionBlur = FlxG.save.data.noteMotionBlur;
+		}
+		if(FlxG.save.data.noteMBMult != null) {
+			noteMBMult = FlxG.save.data.noteMBMult;
+		}
+		if(FlxG.save.data.comboMultLimit != null) {
+			comboMultLimit = FlxG.save.data.comboMultLimit;
+		}
+		if(FlxG.save.data.enableColorShader != null) {
+			enableColorShader = FlxG.save.data.enableColorShader;
+		}
+		if(FlxG.save.data.showNPS != null) {
+			showNPS = FlxG.save.data.showNPS;
+		}
+		if(FlxG.save.data.resultsScreen != null) {
+			resultsScreen = FlxG.save.data.resultsScreen;
+		}
 		if(FlxG.save.data.globalAntialiasing != null) {
 			globalAntialiasing = FlxG.save.data.globalAntialiasing;
 		}
@@ -408,8 +487,8 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		if(FlxG.save.data.charsAndBG != null) {
 			charsAndBG = FlxG.save.data.charsAndBG;
 		}
-		if(FlxG.save.data.progChartLoad != null) {
-			progChartLoad = FlxG.save.data.progChartLoad;
+		if(FlxG.save.data.showcaseMode != null) {
+			showcaseMode = FlxG.save.data.showcaseMode;
 		}
 		if(FlxG.save.data.fasterChartLoad != null) {
 			fasterChartLoad = FlxG.save.data.fasterChartLoad;
@@ -419,6 +498,12 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		}
 		if(FlxG.save.data.voiidTrollMode != null) {
 			voiidTrollMode = FlxG.save.data.voiidTrollMode;
+		}
+		if(FlxG.save.data.minCGBMS != null) {
+			minCGBMS = FlxG.save.data.minCGBMS;
+		}
+		if(FlxG.save.data.maxCGBMS != null) {
+			maxCGBMS = FlxG.save.data.maxCGBMS;
 		}
 		if(FlxG.save.data.compactNumbers != null) {
 			compactNumbers = FlxG.save.data.compactNumbers;
@@ -456,8 +541,8 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		if(FlxG.save.data.noteStyleThing != null) {
 			noteStyleThing = FlxG.save.data.noteStyleThing;
 		}
-		if(FlxG.save.data.accuracyMod != null) {
-			accuracyMod = FlxG.save.data.accuracyMod;
+		if(FlxG.save.data.timeBounce != null) {
+			timeBounce = FlxG.save.data.timeBounce;
 		}
 		if(FlxG.save.data.lengthIntro != null) {
 			lengthIntro = FlxG.save.data.lengthIntro;

@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': JS Engine" file="JSEngine" packageName="com.shadowmario.psychengine" package="com.shadowmario.psychengine" main="Main" version="0.2.8" company="ShadowMario" />
+	<app title="Friday Night Funkin': JS Engine" file="JSEngine" packageName="com.JordanSantiago.JSengine" package="com.JordanSantiago.JSengine" main="Main" version="0.2.8" company="JordanSantiago" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
@@ -44,13 +44,15 @@
 	<classpath name="source" />
 	
 	<!-- PSYCH ENGINE CUSTOMIZATION -->
-	<define name="MODS_ALLOWED" if="desktop || android" />
-	<define name="LUA_ALLOWED" if="desktop || android" />
+	<define name="MODS_ALLOWED" />
+	<define name="LUA_ALLOWED" />
 	<define name="ACHIEVEMENTS_ALLOWED" />
-	<define name="VIDEOS_ALLOWED" if="web || windows || android" unless="32bits"/>
+	<define name="VIDEOS_ALLOWED" unless="32bits"/>
 	<define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE WATERMARKS/DEV NAMES ON TITLE SCREEN -->
 	<define name="TITLE_SCREEN_EASTER_EGG" if="officialBuild"/> <!-- DELETE THE if="officialBuild" for enabling this on an unofficial build -->
 	<define name="CRASH_HANDLER" if="desktop release || android" />
+
+	<assets path="assets/android" if="android"/> <!-- to not have the android assets in another builds -saw -->
 
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
 	<assets path="assets/preload" rename="assets" exclude="*.mp3"  unless="web"/>
@@ -137,7 +139,7 @@
 	<haxelib name="hxCodec" if="VIDEOS_ALLOWED"/>
 	<haxelib name="faxe" if='switch'/>
 	<!--<haxelib name="polymod"/> -->
-	<haxelib name="discord_rpc" />
+	<haxelib name="discord_rpc" if="desktop" />
 
 	<!-- Enables a terminal log prompt on debug builds -->
 	<haxelib name="hxcpp-debug-server" if="debug"/>
@@ -176,16 +178,6 @@
 
 	<!--Disable the Flixel core focus lost screen-->
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
-
-	<section if="android">
-		<config>
-			<!--Gradle-->
-			<android gradle-version="7.4.2" gradle-plugin="7.3.1" />
-
-			<!--Target SDK-->
-			<android target-sdk-version="29" if="${lime &lt; 8.1.0}" />
-		</config>
-	</section>
 
 	<!--Allow working memory greater than 1 Gig. NOTE: i recommend using Flixel 5.2.2 for this to work!-->
 	<haxedef name="HXCPP_GC_BIG_BLOCKS" if="cpp"/>

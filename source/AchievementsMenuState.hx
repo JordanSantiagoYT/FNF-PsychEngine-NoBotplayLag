@@ -28,6 +28,9 @@ class AchievementsMenuState extends MusicBeatState
 	private var descText:FlxText;
 
 	override function create() {
+		Paths.clearStoredMemory();
+		Paths.clearUnusedMemory();
+
 		#if desktop
 		DiscordClient.changePresence("Achievements Menu", null);
 		#end
@@ -70,6 +73,10 @@ class AchievementsMenuState extends MusicBeatState
 		descText.borderSize = 2.4;
 		add(descText);
 		changeSelection();
+
+		#if android
+		addVirtualPad(UP_DOWN, B);
+		#end
 
 		super.create();
 	}
