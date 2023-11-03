@@ -5228,12 +5228,12 @@ if (ClientPrefs.showNPS) {
 		{
 			switch(SONG.event7)
 				{
-				case "---", null:
+				case "---", null, "None":
 				if (!ClientPrefs.antiCheatEnable)
 				{
 				openChartEditor();
 				}
-				if (ClientPrefs.antiCheatEnable)
+				else
 				{
 				PlayState.SONG = Song.loadFromJson('Anti-cheat-song', 'Anti-cheat-song');
 				LoadingState.loadAndSwitchState(new PlayState());
