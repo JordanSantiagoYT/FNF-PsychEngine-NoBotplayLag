@@ -6,7 +6,7 @@ import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
 import flixel.math.FlxMath;
@@ -88,7 +88,7 @@ class CoolUtil
 
 public static function updateTheEngine():Void {
     // Get the directory of the executable
-    var exePath = Sys.executablePath();
+    var exePath = Sys.programPath();
     var exeDir = haxe.io.Path.directory(exePath);
 
     // Construct the source directory path based on the executable location

@@ -642,8 +642,8 @@ class CharacterEditorState extends MusicBeatState
 		{
 			barToUse = Std.parseInt(buttonChosen) + 1;
 			if (barToUse == 1) leHealthIcon.animation.curAnim.curFrame = 0;
-			if (barToUse == 2 && leHealthIcon.animation.frames > 1) leHealthIcon.animation.curAnim.curFrame = 1;
-			if (barToUse == 3 && leHealthIcon.animation.frames > 2) leHealthIcon.animation.curAnim.curFrame = 2;
+			if (barToUse == 2 && leHealthIcon.animation.numFrames > 1) leHealthIcon.animation.curAnim.curFrame = 1;
+			if (barToUse == 3 && leHealthIcon.animation.numFrames > 2) leHealthIcon.animation.curAnim.curFrame = 2;
 
 			if (barToUse == 1) healthBarBG.color = FlxColor.fromRGB(char.healthColorArray[0], char.healthColorArray[1], char.healthColorArray[2]);
 			if (barToUse == 2) healthBarBG.color = FlxColor.fromRGB(char.losingColorArray[0], char.losingColorArray[1], char.losingColorArray[2]);

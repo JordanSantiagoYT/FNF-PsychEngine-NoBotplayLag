@@ -27,7 +27,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -2693,8 +2693,8 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.pitch = value;
 		}
 		playbackRate = value;
-		FlxAnimationController.globalSpeed = value;
-		trace('Anim speed: ' + FlxAnimationController.globalSpeed);
+		FlxG.animationTimeScale = value;
+		trace('Anim speed: ' + FlxG.animationTimeScale);
 		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000 * value;
 		setOnLuas('playbackRate', playbackRate);
 		return value;
@@ -2807,21 +2807,21 @@ class PlayState extends MusicBeatState
 					for(i in camHUDShaders){
 					  newCamEffects.push(new ShaderFilter(i.shader));
 					}
-					camHUD.setFilters(newCamEffects);
+					camHUD.filters = newCamEffects;
 			case 'camother' | 'other':
 					camOtherShaders.push(effect);
 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
 					for(i in camOtherShaders){
 					  newCamEffects.push(new ShaderFilter(i.shader));
 					}
-					camOther.setFilters(newCamEffects);
+					camOther.filters = newCamEffects;
 			case 'camgame' | 'game':
 					camGameShaders.push(effect);
 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
 					for(i in camGameShaders){
 					  newCamEffects.push(new ShaderFilter(i.shader));
 					}
-					camGame.setFilters(newCamEffects);
+					camGame.filters = newCamEffects;
 			default:
 				if(modchartSprites.exists(cam)) {
 					Reflect.setProperty(modchartSprites.get(cam),"shader",effect.shader);
@@ -2852,14 +2852,14 @@ class PlayState extends MusicBeatState
     for(i in camHUDShaders){
       newCamEffects.push(new ShaderFilter(i.shader));
     }
-    camHUD.setFilters(newCamEffects);
+    camHUD.filters = newCamEffects;
 			case 'camother' | 'other': 
 					camOtherShaders.remove(effect);
 					var newCamEffects:Array<BitmapFilter>=[];
 					for(i in camOtherShaders){
 					  newCamEffects.push(new ShaderFilter(i.shader));
 					}
-					camOther.setFilters(newCamEffects);
+					camOther.filters = newCamEffects;
 			default: 
 				if(modchartSprites.exists(cam)) {
 					Reflect.setProperty(modchartSprites.get(cam),"shader",null);
@@ -2884,19 +2884,19 @@ class PlayState extends MusicBeatState
 			case 'camhud' | 'hud': 
 				camHUDShaders = [];
 				var newCamEffects:Array<BitmapFilter>=[];
-				camHUD.setFilters(newCamEffects);
+				camHUD.filters = newCamEffects;
 			case 'camother' | 'other': 
 				camOtherShaders = [];
 				var newCamEffects:Array<BitmapFilter>=[];
-				camOther.setFilters(newCamEffects);
+				camOther.filters = newCamEffects;
 			case 'camgame' | 'game': 
 				camGameShaders = [];
 				var newCamEffects:Array<BitmapFilter>=[];
-				camGame.setFilters(newCamEffects);
+				camGame.filters = newCamEffects;
 			default: 
 				camGameShaders = [];
 				var newCamEffects:Array<BitmapFilter>=[];
-				camGame.setFilters(newCamEffects);
+				camGame.filters = newCamEffects;
 		}
 		
 	  
@@ -4694,7 +4694,7 @@ class PlayState extends MusicBeatState
 				disableTheTripper = true;
 			}
 
-			FlxG.camera.setFilters([new ShaderFilter(screenshader.shader)]);
+			FlxG.camera.filters = [new ShaderFilter(screenshader.shader)];
 			screenshader.update(elapsed);
 			if(disableTheTripper)
 			{
@@ -5314,7 +5314,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 			hitsGiveHealth = true;
 		}
 
-		if (iconP1.animation.frames == 3) {
+		if (iconP1.animation.numFrames == 3) {
 			if (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20))
 				iconP1.animation.curAnim.curFrame = 1;
 			else if (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80))
@@ -5326,7 +5326,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 			if (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20))
 				iconP1.animation.curAnim.curFrame = 1;
 		}
-		if (iconP2.animation.frames == 3) {
+		if (iconP2.animation.numFrames == 3) {
 			if (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80))
 				iconP2.animation.curAnim.curFrame = 1;
 			else if (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20))
@@ -6220,7 +6220,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 						var speedRainbow:Float = Std.parseFloat(value2);
 						disableTheTripper = false;
 						disableTheTripperAt = timeRainbow;
-						FlxG.camera.setFilters([new ShaderFilter(screenshader.shader)]);
+						FlxG.camera.filters = [new ShaderFilter(screenshader.shader)];
 						screenshader.waveAmplitude = 1;
 						screenshader.waveFrequency = 2;
 						screenshader.waveSpeed = speedRainbow * playbackRate;
@@ -8687,7 +8687,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
-		FlxAnimationController.globalSpeed = 1;
+		FlxG.animationTimeScale = 1;
 		FlxG.sound.music.pitch = 1;
 		cpp.vm.Gc.enable(true);
 		KillNotes();

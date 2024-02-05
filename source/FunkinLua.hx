@@ -17,7 +17,7 @@ import flixel.tweens.FlxEase;
 import flixel.text.FlxText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.util.FlxTimer;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
@@ -2815,7 +2815,7 @@ class FunkinLua {
 		
 		Lua_helper.add_callback(lua, "clearShadersFromCamera", function(cameraName)
 		{
-			cameraFromString(cameraName).setFilters([]);
+			cameraFromString(cameraName).filters = [];
 		});	
 					
 		Lua_helper.add_callback(lua, "addGlitchEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
