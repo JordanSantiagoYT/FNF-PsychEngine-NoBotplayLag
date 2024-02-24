@@ -25,6 +25,7 @@ import openfl.display3D.textures.RectangleTexture;
 import lime.media.vorbis.VorbisFile;
 import lime.media.AudioBuffer;
 
+import haxe.io.Path;
 #if cpp
 import cpp.vm.Gc;
 #elseif hl
@@ -230,12 +231,12 @@ class Paths
 	static public function video(key:String)
 	{
 		#if MODS_ALLOWED
-		var file:String = modsVideo(key);
+		var file:String = Path.normalize(modsVideo(key));
 		if(FileSystem.exists(file)) {
 			return file;
 		}
 		#end
-		return 'assets/videos/$key.$VIDEO_EXT';
+		return Path.normalize('assets/videos/$key.$VIDEO_EXT');
 	}
 	//Sound loading.
 	static public function sound(key:String, ?library:String):Sound
