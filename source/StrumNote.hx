@@ -168,6 +168,7 @@ class StrumNote extends FlxSprite
 	}
 
 	override function update(elapsed:Float) {
+		if (ClientPrefs.ffmpegMode) elapsed = 1 / ClientPrefs.targetFPS;
 		if(resetAnim > 0) {
 			resetAnim -= elapsed;
 			if(resetAnim <= 0) {

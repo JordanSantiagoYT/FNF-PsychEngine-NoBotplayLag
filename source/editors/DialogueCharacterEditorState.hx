@@ -40,6 +40,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 {
 	var box:FlxSprite;
 	var daText:TypedAlphabet = null;
+	var music:EditingMusic;
 
 	private static var TIP_TEXT_MAIN:String = 'JKLI - Move camera (Hold Shift to move 4x faster)
 	\nQ/E - Zoom out/in
@@ -77,6 +78,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 		camHUD = new FlxCamera();
 		camGame.bgColor = FlxColor.fromHSL(0, 0, 0.5);
 		camHUD.bgColor.alpha = 0;
+
+		music = new EditingMusic();
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD, false);
@@ -503,6 +506,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 			return;
 		}
 
+		if (FlxG.mouse.justPressed) FlxG.sound.play(Paths.sound('click'));
+
 		if(character.animation.curAnim != null) {
 			if(daText.finishedText) {
 				if(character.animationIsLoop()) {
@@ -689,6 +694,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 				FlxG.switchState(editors.MasterEditorMenu.new);
 				FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic), 1);
 				transitioning = true;
+				music.destroy();
 			}
 
 			ghostLoop.setPosition(character.x, character.y);
@@ -829,4 +835,16 @@ class DialogueCharacterEditorState extends MusicBeatState
 		var text:String = prefix + Clipboard.text.replace('\n', '');
 		return text;
 	}
+	override public function onFocusLost():Void
+	    {
+		    music.pauseMusic();
+
+		    super.onFocusLost();
+	    }
+	override public function onFocus():Void
+	    {
+		    music.unpauseMusic();
+
+		    super.onFocus();
+	    }
 }

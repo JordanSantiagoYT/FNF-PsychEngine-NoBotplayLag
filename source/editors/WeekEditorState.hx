@@ -44,6 +44,7 @@ class WeekEditorState extends MusicBeatState
 	var grpWeekCharacters:FlxTypedGroup<MenuCharacter>;
 	var weekThing:MenuItem;
 	var missingFileText:FlxText;
+	var music:EditingMusic;
 
 	var weekFile:WeekFile = null;
 	public function new(weekFile:WeekFile = null)
@@ -55,6 +56,7 @@ class WeekEditorState extends MusicBeatState
 	}
 
 	override function create() {
+		music = new EditingMusic();
 		txtWeekTitle = new FlxText(FlxG.width * 0.7, 10, 0, "", 32);
 		txtWeekTitle.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, RIGHT);
 		txtWeekTitle.alpha = 0.7;
@@ -145,6 +147,7 @@ class WeekEditorState extends MusicBeatState
 		
 		var freeplayButton:FlxButton = new FlxButton(0, 650, "Freeplay", function() {
 			FlxG.switchState(() -> new WeekEditorFreeplayState(weekFile));
+			music.destroy();
 			
 		});
 		freeplayButton.screenCenter(X);
@@ -430,6 +433,7 @@ class WeekEditorState extends MusicBeatState
 	
 	override function update(elapsed:Float)
 	{
+		if (FlxG.mouse.justPressed) FlxG.sound.play(Paths.sound('click'));
 		if(loadedWeek != null) {
 			weekFile = loadedWeek;
 			loadedWeek = null;
@@ -457,6 +461,7 @@ class WeekEditorState extends MusicBeatState
 			if(FlxG.keys.justPressed.ESCAPE) {
 				FlxG.switchState(editors.MasterEditorMenu.new);
 				FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
+				music.destroy();
 			}
 		}
 
@@ -585,6 +590,18 @@ class WeekEditorState extends MusicBeatState
 		_file = null;
 		FlxG.log.error("Problem saving file");
 	}
+	override public function onFocusLost():Void
+	    {
+		    music.pauseMusic();
+
+		    super.onFocusLost();
+	    }
+	override public function onFocus():Void
+	    {
+		    music.unpauseMusic();
+
+		    super.onFocus();
+	    }
 }
 
 class WeekEditorFreeplayState extends MusicBeatState
@@ -600,10 +617,12 @@ class WeekEditorFreeplayState extends MusicBeatState
 	var bg:FlxSprite;
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var iconArray:Array<HealthIcon> = [];
+	var music:EditingMusic;
 
 	var curSelected = 0;
 
 	override function create() {
+		music = new EditingMusic();
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 
@@ -668,7 +687,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 		
 		var storyModeButton:FlxButton = new FlxButton(0, 685, "Story Mode", function() {
 			FlxG.switchState(() -> new WeekEditorState(weekFile));
-			
+			music.destroy();
 		});
 		storyModeButton.screenCenter(X);
 		add(storyModeButton);
@@ -799,11 +818,13 @@ class WeekEditorFreeplayState extends MusicBeatState
 	}
 
 	override function update(elapsed:Float) {
+		if (FlxG.mouse.justPressed) FlxG.sound.play(Paths.sound('click'));
 		if(WeekEditorState.loadedWeek != null) {
 			super.update(elapsed);
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			FlxG.switchState(() -> new WeekEditorFreeplayState(WeekEditorState.loadedWeek));
+			music.destroy();
 			WeekEditorState.loadedWeek = null;
 			return;
 		}
@@ -822,6 +843,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 			if(FlxG.keys.justPressed.ESCAPE) {
 				FlxG.switchState(editors.MasterEditorMenu.new);
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				music.destroy();
 			}
 
 			if(controls.UI_UP_P) changeSelection(-1);
@@ -829,4 +851,16 @@ class WeekEditorFreeplayState extends MusicBeatState
 		}
 		super.update(elapsed);
 	}
+	override public function onFocusLost():Void
+	    {
+		    music.pauseMusic();
+
+		    super.onFocusLost();
+	    }
+	override public function onFocus():Void
+	    {
+		    music.unpauseMusic();
+
+		    super.onFocus();
+	    }
 }

@@ -92,6 +92,7 @@ class CreditsState extends MusicBeatState
 			[''],
 			['Special Engine Thanks'],
 			['Denpa Engine',			'denpeak',				'The crossfade code used for this engine',								'https://github.com/UmbratheUmbreon/PublicDenpaEngine',			'FF9300'],
+			['HRK. EXEX',			'hrk',				'Created Video Rendering Mode for FNF',								'https://www.youtube.com/@HRK_EXEX/featured',			'01F8FF'],
 			['Betopia', 'nothing', 'Freeplay Search bar creator', 'https://www.youtube.com/channel/UCfjyz9xRhZiRbLMteQloVeg', 'FFFFFF'],
 			['Psych Engine Team'],
 			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',								'https://twitter.com/Shadow_Mario_',	'444444'],

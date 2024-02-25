@@ -44,6 +44,13 @@ class OptimizationSubState extends BaseOptionsMenu
 			true); //Default value
 		addOption(option);
 
+		var option:Option = new Option('Enable GC',
+			"If checked, then the game will be allowed to garbage collect, reducing RAM usage I suppose.\nIf you experience memory leaks, turn this on, and\nif you experience lag with it on then turn it off.",
+			'enableGC',
+			'bool',
+			false);
+		addOption(option);
+
 		var option:Option = new Option('Light Opponent Strums',
 			"If this is unchecked, the Opponent strums won't light up when the Opponent hits a note.",
 			'opponentLightStrum',

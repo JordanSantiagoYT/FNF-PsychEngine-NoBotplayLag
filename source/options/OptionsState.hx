@@ -37,7 +37,7 @@ class OptionsState extends MusicBeatState
 var konamiIndex:Int = 0; // Track the progress in the Konami code sequence
 	var konamiCode = [];
 	var isEnteringKonamiCode:Bool = false;
-	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Optimization', 'Visuals and UI', 'Gameplay', 'Misc'];
+	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Optimization', 'Game Rendering', 'Visuals and UI', 'Gameplay', 'Misc'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -60,6 +60,8 @@ var konamiIndex:Int = 0; // Track the progress in the Konami code sequence
 				openSubState(new options.GameplaySettingsSubState());
 			case 'Optimization':
 				openSubState(new options.OptimizationSubState());
+			case 'Game Rendering':
+				openSubState(new options.GameRendererSettingsSubState());
 			case 'Adjust Delay and Combo':
 				LoadingState.loadAndSwitchState(() -> new options.NoteOffsetState());
 			case 'Misc':
@@ -95,11 +97,11 @@ var konamiIndex:Int = 0; // Track the progress in the Konami code sequence
 		DiscordClient.changePresence("Options Menu", null);
 		#end
 
-		var yScroll:Float = Math.max(0.25 - (0.05 * (options.length - 4)), 0.1);
+		var yScroll:Float = Math.max(0.25 - (0.05 * (options.length - options.length)), 0.1);
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
 		bg.updateHitbox();
-		bg.scrollFactor.set(0, yScroll / 4);
+		bg.scrollFactor.set(0, 0);
 
 		bg.screenCenter();
 		bg.y -= 5;

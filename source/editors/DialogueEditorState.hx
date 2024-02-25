@@ -39,6 +39,7 @@ class DialogueEditorState extends MusicBeatState
 	var character:DialogueCharacter;
 	var box:FlxSprite;
 	var daText:TypedAlphabet;
+	var music:EditingMusic;
 
 	var selectedText:FlxText;
 	var animText:FlxText;
@@ -47,6 +48,7 @@ class DialogueEditorState extends MusicBeatState
 	var dialogueFile:DialogueFile = null;
 
 	override function create() {
+		music = new EditingMusic();
 		persistentUpdate = persistentDraw = true;
 		FlxG.camera.bgColor = FlxColor.fromHSL(0, 0, 0.5);
 
@@ -323,6 +325,7 @@ class DialogueEditorState extends MusicBeatState
 			super.update(elapsed);
 			return;
 		}
+		if (FlxG.mouse.justPressed) FlxG.sound.play(Paths.sound('click'));
 
 		if(character.animation.curAnim != null) {
 			if(daText.finishedText) {
@@ -365,6 +368,7 @@ class DialogueEditorState extends MusicBeatState
 				FlxG.switchState(editors.MasterEditorMenu.new);
 				FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic), 1);
 				transitioning = true;
+				music.destroy();
 			}
 			var negaMult:Array<Int> = [1, -1];
 			var controlAnim:Array<Bool> = [FlxG.keys.justPressed.W,
@@ -568,4 +572,16 @@ class DialogueEditorState extends MusicBeatState
 		_file = null;
 		FlxG.log.error("Problem saving file");
 	}
+	override public function onFocusLost():Void
+	    {
+		    music.pauseMusic();
+
+		    super.onFocusLost();
+	    }
+	override public function onFocus():Void
+	    {
+		    music.unpauseMusic();
+
+		    super.onFocus();
+	    }
 }

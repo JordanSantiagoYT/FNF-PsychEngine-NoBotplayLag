@@ -38,8 +38,10 @@ class MenuCharacterEditorState extends MusicBeatState
 	var characterFile:MenuCharacterFile = null;
 	var txtOffsets:FlxText;
 	var defaultCharacters:Array<String> = ['dad', 'bf', 'gf'];
+	var music:EditingMusic;
 
 	override function create() {
+		music = new EditingMusic();
 		characterFile = {
 			image: 'Menu_Dad',
 			scale: 1,
@@ -270,6 +272,7 @@ class MenuCharacterEditorState extends MusicBeatState
 	}
 
 	override function update(elapsed:Float) {
+		if (FlxG.mouse.justPressed) FlxG.sound.play(Paths.sound('click'));
 		var blockInput:Bool = false;
 		for (inputText in blockPressWhileTypingOn) {
 			if(inputText.hasFocus) {
@@ -290,6 +293,7 @@ class MenuCharacterEditorState extends MusicBeatState
 			if(FlxG.keys.justPressed.ESCAPE) {
 				FlxG.switchState(editors.MasterEditorMenu.new);
 				FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
+				music.destroy();
 			}
 
 			var shiftMult:Int = 1;
@@ -448,4 +452,16 @@ class MenuCharacterEditorState extends MusicBeatState
 		_file = null;
 		FlxG.log.error("Problem saving file");
 	}
+	override public function onFocusLost():Void
+	    {
+		    music.pauseMusic();
+
+		    super.onFocusLost();
+	    }
+	override public function onFocus():Void
+	    {
+		    music.unpauseMusic();
+
+		    super.onFocus();
+	    }
 }

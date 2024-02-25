@@ -94,7 +94,10 @@ class FPS extends TextField
 		if (currentFPS > ClientPrefs.framerate) currentFPS = ClientPrefs.framerate;
 		if (FlxG.state != null && Type.getClassName(Type.getClass(FlxG.state)) == 'PlayState' && PlayState.instance.playbackRate != 1) currentFPS /= PlayState.instance.playbackRate;
 
-			text = (ClientPrefs.showFPS ? "FPS: " + FlxStringUtil.formatMoney(currentFPS, false) : "");
+			text = (ClientPrefs.showFPS ? "FPS: " + (ClientPrefs.ffmpegMode ? ClientPrefs.targetFPS : currentFPS) : "");
+			if (ClientPrefs.ffmpegMode) {
+				text += " (Rendering Mode)";
+			}
 			
 			if (ClientPrefs.showRamUsage) text += "\nMemory: " + CoolUtil.formatBytes(Memory.getCurrentUsage(), false, 2) + (ClientPrefs.showMaxRamUsage ? " / " + CoolUtil.formatBytes(Memory.getPeakUsage(), false, 2) : "");
 
@@ -105,36 +108,47 @@ class FPS extends TextField
 				text += "\nSystem: " + '${lime.system.System.platformLabel} ${lime.system.System.platformVersion}';
 			}
 
-    			if (ClientPrefs.rainbowFPS)
-    			{
-		 			colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
-					var colorIndex1:Int = Math.floor(colorInterp);
-					var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
-
-					var startColor:Int = rainbowColors[colorIndex1];
-					var endColor:Int = rainbowColors[colorIndex2];
-
-					var segmentInterp:Float = colorInterp - colorIndex1;
-
-					var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
-
-					textColor = interpolatedColor;
-
-					// Check if the current color segment interpolation is complete
-					if (colorInterp >= rainbowColors.length) {
-						// Reset colorInterp to start the interpolation cycle again
-					textColor = rainbowColors[0];
-					colorInterp = 0;
-					}
-    			}
-			else
-			{
-				textColor = 0xFFFFFFFF;
-				if (currentFPS <= ClientPrefs.framerate / 2)
+				if (!ClientPrefs.ffmpegMode)
 				{
-					textColor = 0xFFFF0000;
+    					if (ClientPrefs.rainbowFPS)
+    					{
+		 				colorInterp += deltaTime / 330; // Division so that it doesn't give you a seizure on 60 FPS
+						var colorIndex1:Int = Math.floor(colorInterp);
+						var colorIndex2:Int = (colorIndex1 + 1) % rainbowColors.length;
+
+						var startColor:Int = rainbowColors[colorIndex1];
+						var endColor:Int = rainbowColors[colorIndex2];
+
+						var segmentInterp:Float = colorInterp - colorIndex1;
+
+						var interpolatedColor:Int = interpolateColor(startColor, endColor, segmentInterp);
+
+						textColor = interpolatedColor;
+
+						// Check if the current color segment interpolation is complete
+						if (colorInterp >= rainbowColors.length) {
+							// Reset colorInterp to start the interpolation cycle again
+						textColor = rainbowColors[0];
+						colorInterp = 0;
+						}
+    					}
+					else
+					{
+						textColor = 0xFFFFFFFF;
+						if (currentFPS <= ClientPrefs.framerate / 2 && currentFPS >= ClientPrefs.framerate / 3)
+						{
+							textColor = 0xFFFFFF00;
+						}
+						if (currentFPS <= ClientPrefs.framerate / 3 && currentFPS >= ClientPrefs.framerate / 4)
+						{
+							textColor = 0xFFFF8000;
+						}
+						if (currentFPS <= ClientPrefs.framerate / 4)
+						{
+							textColor = 0xFFFF0000;
+						}
+					}
 				}
-			}
 
 			#if (gl_stats && !disable_cffi && (!html5 || !canvas))
 			text += "\ntotalDC: " + Context3DStats.totalDrawCalls();
