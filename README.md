@@ -1,24 +1,31 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag"><img src="assets/exclude/images/jslol.png" alt="JSengine" width="200"></a>
+  <a href="https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag"><img src="assets/exclude/images/jslol.png" alt="JSengine" width="150"></a>
   <br>
   <b>JS ENGINE</b>
   <br>
 </h1>
+<h2 align="center">
+  <b>An engine I made for Bambi spamtracks. Used to be called "Psych Engine: No Botplay Lag"</b>
+</h2>
 
 **WARNING: SET HXCODEC TO 2.5.1 TO FIX CRASHES WITH EXTRA KEYS WITH LUA SCRIPTS**
 
-# Friday Night Funkin' - JS Engine
-An engine I made for Bambi spamtracks. Used to be called "Psych Engine: No Botplay Lag"
-
 # FEATRUES IN JS ENGINE:
 This fork of psych engine 0.6.3 has lots of features, even more than OS ENGINE!
+
 The engine:
 - Can load notes more than 100k instead of closing the window
 - Can load longer than 20m30s songs
 - Has lots of optimization
 - Can chart bambi songs EASIER
 - Has basic shader support (such as `addGlitchEffect`, `addChromaticAbberationEffect`, and more!)
+- Can turn your bad pc into a better pc if you are having trouble lagging hard in the base one.
+- Is spam friendly
+- Has some cool features you might want to try it out
+- Uses 0.6.3 instead of the new ones (such as 0.7.3)
+
+(and possibly more stuff that will be listed here...)
 
 ## Installation:
 You must have [the most up-to-date version of Haxe](https://haxe.org/download/), seriously, stop using 4.1.5, it misses some stuff.
@@ -34,8 +41,8 @@ inside `Project.xml`, you will find several variables to customize JS Engine to 
 to start you off, disabling Videos should be simple, simply Delete the line `"VIDEOS_ALLOWED"` or comment it out by wrapping the line in XML-like comments, like this `<!-- YOUR_LINE_HERE -->`
 
 same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, this and other customization options are all available within the `Project.xml` file
-
-## Credits:
+<details>
+  <summary><h2>Credits and stuff below</h2></summary>
 * Shadow Mario - Programmer
 * RiverOaken - Artist
 
