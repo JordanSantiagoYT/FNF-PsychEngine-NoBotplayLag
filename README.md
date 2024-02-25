@@ -5,9 +5,9 @@
   <b>JS ENGINE</b>
   <br>
 </h1>
-<h2 align="center">
+<h3 align="center">
   <b>An engine I made for Bambi spamtracks. Used to be called "Psych Engine: No Botplay Lag"</b>
-</h2>
+</h3>
 
 **WARNING: SET HXCODEC TO 2.5.1 TO FIX CRASHES WITH EXTRA KEYS WITH LUA SCRIPTS**
 
