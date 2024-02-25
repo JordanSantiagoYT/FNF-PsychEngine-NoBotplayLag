@@ -11,7 +11,7 @@
 
 **WARNING: SET HXCODEC TO 2.5.1 TO FIX CRASHES WITH EXTRA KEYS WITH LUA SCRIPTS**
 
-# FEATRUES IN JS ENGINE:
+# FEATURES IN JS ENGINE:
 This fork of psych engine 0.6.3 has lots of features, even more than OS ENGINE!
 
 The engine:
