@@ -4,16 +4,9 @@ import flixel.math.FlxMath;
 import flixel.FlxSprite;
 import openfl.utils.Assets as OpenFlAssets;
 import flixel.FlxG;
-import flixel.graphics.FlxGraphic;
 
 using StringTools;
 
-enum abstract IconType(Int) to Int from Int //abstract so it can hold int values for the frame count
-{
-    var SINGLE = 0;
-    var DEFAULT = 1;
-    var WINNING = 2;
-}
 class HealthIcon extends FlxSprite
 {
 	public var sprTracker:FlxSprite;
@@ -21,7 +14,6 @@ class HealthIcon extends FlxSprite
 	private var isOldIcon:Bool = false;
 	private var isPlayer:Bool = false;
 	private var char:String = '';
-	public var type:IconType = DEFAULT;
 
 	public function new(char:String = 'bf', isPlayer:Bool = false, ?allowGPU:Bool = true)
 	{
@@ -51,31 +43,48 @@ class HealthIcon extends FlxSprite
 		else changeIcon('bf');
 	}
 
-	public var offsets(default, set):Array<Float> = [0, 0];
+	public var iconOffsets:Array<Float> = [0, 0, 0];
 	public function changeIcon(char:String) {
 		if(this.char != char) {
 			var name:String = 'icons/' + char;
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
-			var file:FlxGraphic = Paths.image(name);
+			var file:Dynamic = Paths.image(name);
 
-			type = (file.width < 200 ? SINGLE : ((file.width > 199 && file.width < 301) ? DEFAULT : WINNING));
+			if (file == null)
+				file == Paths.image('icons/icon-face');
+			else if (!Paths.fileExists('images/icons/icon-face.png', IMAGE)){
+				// throw "Don't delete the placeholder icon";
+				trace("Warning: could not find the placeholder icon, expect crashes!");
+			}
 
-			loadGraphic(file, true, Math.floor(file.width / (type+1)), file.height);
-			offsets[0] = offsets[1] = (width - 150) / (type+1);
-			var frames:Array<Int> = [];
-			for (i in 0...type+1) frames.push(i);
-			animation.add(char, frames, 0, false, isPlayer);
-			animation.play(char);
-			this.char = char;
+			loadGraphic(file); //Load stupidly first for getting the file size
+			var width2 = width;
+			if (width == 450) {
+				loadGraphic(file, true, Math.floor(width / 3), Math.floor(height)); //Then load it fr // winning icons go br
+				iconOffsets[0] = (width - 150) / 3;
+				iconOffsets[1] = (width - 150) / 3;
+				iconOffsets[2] = (width - 150) / 3;
+			} else {
+				loadGraphic(file, true, Math.floor(width / 2), Math.floor(height)); //Then load it fr // winning icons go br
+				iconOffsets[0] = (width - 150) / 2;
+				iconOffsets[1] = (width - 150) / 2;
+			}
 
-			//Earlier Version Icon Control Support
-			antialiasing = !char.endsWith('-pixel');
 			updateHitbox();
+
+			if (width2 == 450) {
+				animation.add(char, [0, 1, 2], 0, false, isPlayer);
+			} else {
+				animation.add(char, [0, 1], 0, false, isPlayer);
+			}
 			animation.play(char);
 			this.char = char;
 
-			if (antialiasing) antialiasing = ClientPrefs.globalAntialiasing;
+			antialiasing = ClientPrefs.globalAntialiasing;
+			if(char.endsWith('-pixel')) {
+				antialiasing = false;
+			}
 		}
 	}
 
@@ -92,19 +101,11 @@ class HealthIcon extends FlxSprite
 		if (ClientPrefs.iconBounceType != 'Golden Apple' && ClientPrefs.iconBounceType != 'Dave and Bambi' || Type.getClassName(Type.getClass(FlxG.state)) != 'PlayState')
 		{
 		super.updateHitbox();
-		offset.x = offsets[0];
-		offset.y = offsets[1];
+		offset.x = iconOffsets[0];
+		offset.y = iconOffsets[1];
 		} else {
 		super.updateHitbox();
 		}
-	}
-
-	function set_offsets(newArr:Array<Float>):Array<Float>
-	{
-		offsets = newArr;
-		offset.x = offsets[0];
-		offset.y = offsets[1];
-		return offsets;
 	}
 
 	public function getCharacter():String {

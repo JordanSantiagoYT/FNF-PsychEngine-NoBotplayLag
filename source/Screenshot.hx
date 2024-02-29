@@ -15,9 +15,10 @@ class Screenshot {
     var height:Int;
     var window:Window = null;
     var image:Image;
-    var target:String = "assets\\gameRenders";
+    var target:String = #if !linux "assets\\gameRenders" #else "assets/gameRenders" #end;
     var isLossless = ClientPrefs.lossless;
     var quality = ClientPrefs.quality;
+	public static var slash:String = #if !linux "\\" #else "/" #end;
 
     public function new(x:Int = -1, y:Int = -1, w:Int = -1, h:Int = -1) {
         if(x < 0) this.x = 0;
@@ -71,23 +72,23 @@ class Screenshot {
             } 
         } else FileSystem.createDirectory(target);
 
-        if(FileSystem.exists(target + '\\' + path)) {
-            if(!FileSystem.isDirectory(target + '\\' + path)) {
-                FileSystem.deleteFile(target + '\\' + path);
-                FileSystem.createDirectory(target + '\\' + path);
+        if(FileSystem.exists(target + slash + path)) {
+            if(!FileSystem.isDirectory(target + slash + path)) {
+                FileSystem.deleteFile(target + slash + path);
+                FileSystem.createDirectory(target + slash + path);
             } 
-        } else FileSystem.createDirectory(target + '\\' + path);
+        } else FileSystem.createDirectory(target + slash + path);
         
         if(path + name == "" || path + name == null) {
             var millis = CoolUtil.zeroFill(Std.int(haxe.Timer.stamp() * 1000.0) % 1000, 3);
             path = "scr-" + DateTools.format(Date.now(), "%Y-%m-%d_%H-%M-%S-") + millis;
         }
 
-        path = target +"\\"+ fixFilename(path + name, isLossless);
+        path = target + slash + fixFilename(path + name, isLossless);
 
-        byteData = image.encode(isLossless ? PNG : JPEG, 85);
+        byteData = image.encode(isLossless ? PNG : JPEG, quality);
         var f:FileOutput = sys.io.File.write(path, true);
-        if(byteData != null) {
+        if(byteData != null && f != null) {
             f.write(byteData);
             f.close();
             return true;

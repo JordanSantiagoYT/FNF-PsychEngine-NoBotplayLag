@@ -35,6 +35,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var oppNoteSplashes:Bool = true;
 	public static var instaRestart:Bool = false;
 	public static var charsAndBG:Bool = true;
+	public static var enableGC:Bool = false;
 	public static var lowQuality:Bool = false;
 	public static var smoothHPBug:Bool = false;
 	public static var shaders:Bool = true;
@@ -281,11 +282,10 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		FlxG.save.data.rateNameStuff = rateNameStuff;
 		FlxG.save.data.longFCName = longFCName;
 		FlxG.save.data.botTxtFade = botTxtFade;
-		FlxG.save.data.noteMotionBlur = noteMotionBlur;
 		FlxG.save.data.noteColorStyle = noteColorStyle;
-		FlxG.save.data.noteMBMult = noteMBMult;
 		FlxG.save.data.showNotes = showNotes;
 		FlxG.save.data.skipResultsScreen = skipResultsScreen;
+		FlxG.save.data.enableGC = enableGC;
 		FlxG.save.data.timeBounce = timeBounce;
 		FlxG.save.data.maxCGBMS = maxCGBMS;
 		FlxG.save.data.minCGBMS = minCGBMS;
@@ -557,6 +557,9 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		}
 		if(FlxG.save.data.noSyncing != null) {
 			noSyncing = FlxG.save.data.noSyncing;
+		}
+		if(FlxG.save.data.enableGC != null) {
+			enableGC = FlxG.save.data.enableGC;
 		}
 		if(FlxG.save.data.songLoading != null) {
 			songLoading = FlxG.save.data.songLoading;

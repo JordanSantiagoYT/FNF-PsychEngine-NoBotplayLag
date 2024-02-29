@@ -181,6 +181,9 @@ class PlayState extends MusicBeatState
 	var curTime:Float = 0;
 	var songCalc:Float = 0;
 
+	public var healthDrainAmount:Float = 0.023;
+	public var healthDrainFloor:Float = 0.1;
+
 	public var spawnTime:Float = 1600; //just enough for the notes to barely inch off the screen
 	public var changedSpawnTime:Float = 1600; //just enough for the notes to barely inch off the screen
 	
@@ -208,6 +211,8 @@ class PlayState extends MusicBeatState
 	public var isEkSong:Bool = false; //we'll use this so that the game doesn't load all notes twice?
 	public var usingEkFile:Bool = false; //we'll also use this so that the game doesn't load all notes twice?
 
+	public var memoryOver6GB:Bool = false; //For Rendering Mode
+
 	public var notes:NoteGroup;
 	public var sustainNotes:FlxTypedGroup<Note>;
 	public var unspawnNotes:Array<Note> = [];
@@ -215,7 +220,7 @@ class PlayState extends MusicBeatState
 	public var eventNotes:Array<EventNote> = [];
 	public var eventNotesCopy:Array<EventNote> = [];
 
-	private var strumLine:FlxSprite;
+	private var strumLine:FlxPoint;
 
 	//Handles the new epic mega sexy cam code that i've done
 	public var camFollow:FlxPoint;
@@ -483,6 +488,8 @@ class PlayState extends MusicBeatState
 	public static var seenCutscene:Bool = false;
 	public static var deathCounter:Int = 0;
 
+	public static var shouldDrainHealth:Bool = false;
+
 	public var defaultCamZoom:Float = 1.05;
 	
 	// how big to stretch the pixel art assets
@@ -571,6 +578,27 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
+		if (Main.getMemoryAmount() > Math.pow(2, 32) * 1.5) memoryOver6GB = true;
+		//Stops playing on a height that isn't divisible by 2
+		if (ClientPrefs.ffmpegMode && ClientPrefs.resolution != null) {
+    			var resolutionValue = cast(ClientPrefs.resolution, String);
+
+    			if (resolutionValue != null) {
+        			var parts = resolutionValue.split('x');
+        
+        			if (parts.length == 2) {
+            				var width = Std.parseInt(parts[0]);
+            				var height = Std.parseInt(parts[1]);
+            	
+            				if (width != null && height != null) {
+						CoolUtil.resetResScale(width, height);
+                				FlxG.resizeGame(width, height);
+						lime.app.Application.current.window.width = width;
+						lime.app.Application.current.window.height = height;
+            				}
+        			}
+    			}
+		}
 		if (ffmpegMode) {
 			FlxG.fixedTimestep = true;
 			FlxG.animationTimeScale = ClientPrefs.framerate / targetFPS;
@@ -590,8 +618,7 @@ class PlayState extends MusicBeatState
 		randomBotplayText = theListBotplay[FlxG.random.int(0, theListBotplay.length - 1)];
 		//trace('Playback Rate: ' + playbackRate);
 
-			if (!ffmpegMode) cpp.vm.Gc.enable(false); //lagspike prevention
-			if (ffmpegMode) cpp.vm.Gc.enable(true); //There's no harm in enabling GC in video rendering mode.. right?
+			cpp.vm.Gc.enable(ClientPrefs.enableGC || ffmpegMode); //lagspike prevention
 			Paths.clearStoredMemory();
 
 			#if sys
@@ -1463,6 +1490,10 @@ class PlayState extends MusicBeatState
 		}
 		}
 
+		shouldDrainHealth = (opponentDrain || (opponentChart ? boyfriend.healthDrain : dad.healthDrain));
+		if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainAmount)) healthDrainAmount = opponentChart ? boyfriend.drainAmount : dad.drainAmount;
+		if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainFloor)) healthDrainFloor = opponentChart ? boyfriend.drainFloor : dad.drainFloor;
+
 		var camPos:FlxPoint = new FlxPoint(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
 		if(gf != null)
 		{
@@ -1524,9 +1555,7 @@ class PlayState extends MusicBeatState
 			add(laneunderlay);
 		}
 
-		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
-		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
-		strumLine.scrollFactor.set();
+		strumLine = FlxPoint.get(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, (ClientPrefs.downScroll) ? FlxG.height - 150 : 50);
 
 		var showTime:Bool = (ClientPrefs.timeBarType != 'Disabled');
 		
@@ -2220,6 +2249,7 @@ class PlayState extends MusicBeatState
 		renderedTxt.setFormat(Paths.font("vcr.ttf"), 40, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		renderedTxt.scrollFactor.set();
 		renderedTxt.borderSize = 1.25;
+		renderedTxt.cameras = [camHUD];
 		renderedTxt.visible = ClientPrefs.showRendered;
 
 		if (ClientPrefs.downScroll) renderedTxt.y = healthBar.y + 50;
@@ -2373,7 +2403,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 			if (ClientPrefs.showRendered)
-			renderedTxt.text = 'Rendered Notes: ' + FlxStringUtil.formatMoney(notes.length + sustainNotes.length, false);
+			renderedTxt.text = 'Rendered Notes: ' + FlxStringUtil.formatMoney(notes.length, false);
 
 		if (ClientPrefs.communityGameBot && botplayTxt != null) botplayTxt.destroy();
 
@@ -3061,6 +3091,10 @@ class PlayState extends MusicBeatState
 			case "constant":
 				songSpeed = ClientPrefs.getGameplaySetting('scrollspeed', 1);
 		}
+
+		shouldDrainHealth = (opponentDrain || (opponentChart ? boyfriend.healthDrain : dad.healthDrain));
+		if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainAmount)) healthDrainAmount = opponentChart ? boyfriend.drainAmount : dad.drainAmount;
+		if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainFloor)) healthDrainFloor = opponentChart ? boyfriend.drainFloor : dad.drainFloor;
 	}
 
 	function schoolIntro(?dialogueBox:DialogueBox):Void
@@ -4070,7 +4104,7 @@ class PlayState extends MusicBeatState
 	private var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
 	private function generateSong(dataPath:String, ?startingPoint:Float = 0):Void
 	{
-       		var startTime = Sys.time();
+       		final startTime = Sys.time();
 
 		songSpeedType = ClientPrefs.getGameplaySetting('scrolltype','multiplicative');
 
@@ -4098,10 +4132,10 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.songLoading) FlxG.sound.list.add(vocals);
 		if (ClientPrefs.songLoading) FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
 
-		var noteData:Array<SwagSection> = SONG.notes;
+		final noteData:Array<SwagSection> = SONG.notes;
 
-		var songName:String = Paths.formatToSongPath(SONG.song);
-		var file:String = Paths.json(songName + '/events');
+		final songName:String = Paths.formatToSongPath(SONG.song);
+		final file:String = Paths.json(songName + '/events');
 		#if MODS_ALLOWED
 		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || FileSystem.exists(file)) {
 		#else
@@ -4156,7 +4190,7 @@ class PlayState extends MusicBeatState
 				}
 				if (songNotes[0] >= startingPoint - 350)
 				{
-					var daStrumTime:Float = songNotes[0];
+					final daStrumTime:Float = songNotes[0];
 					var daNoteData:Int = 0;
 					if (!randomMode && !flip && !stairs && !waves)
 					{
@@ -4216,7 +4250,7 @@ class PlayState extends MusicBeatState
 					}
 					var oldNote:Note = unspawnNotes.length > 0 ? unspawnNotes[Std.int(unspawnNotes.length - 1)] : null;
 
-					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, (gottaHitNote ? bfNoteskin : dadNoteskin), false, false, !isEkSong);
+					final swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, (gottaHitNote ? bfNoteskin : dadNoteskin), false, false, !isEkSong);
 					if (ClientPrefs.doubleGhost)
 						{
 						swagNote.row = Conductor.secsToRow(daStrumTime);
@@ -4239,7 +4273,7 @@ class PlayState extends MusicBeatState
 						{
 							oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-							var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote), daNoteData, oldNote, (gottaHitNote ? bfNoteskin : dadNoteskin), true, false, !isEkSong);
+							final sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote), daNoteData, oldNote, (gottaHitNote ? bfNoteskin : dadNoteskin), true, false, !isEkSong);
 							sustainNote.mustPress = gottaHitNote;
 							sustainNote.gfNote = (section.gfSection && (songNotes[1]<4));
 							sustainNote.noteType = swagNote.noteType;
@@ -4264,13 +4298,12 @@ class PlayState extends MusicBeatState
 					if(!noteTypeMap.exists(swagNote.noteType)) {
 						noteTypeMap.set(swagNote.noteType, true);
 					}
-					var jackNote:Note;
 
 					if (jackingtime > 0)
 					{
 						for (i in 0...Std.int(jackingtime))
 						{
-							jackNote = new Note(swagNote.strumTime + (15000/SONG.bpm) * (i + 1), swagNote.noteData, oldNote, (gottaHitNote ? boyfriend.noteskin : dad.noteskin), false, false, !isEkSong);
+							final jackNote:Note = new Note(swagNote.strumTime + (15000/SONG.bpm) * (i + 1), swagNote.noteData, oldNote, (gottaHitNote ? boyfriend.noteskin : dad.noteskin), false, false, !isEkSong);
 							jackNote.scrollFactor.set();
 
 					jackNote.sustainLength = swagNote.sustainLength;
@@ -4756,7 +4789,7 @@ class PlayState extends MusicBeatState
 		}
 
 			if (ClientPrefs.showRendered)
-			renderedTxt.text = 'Rendered Notes: ' + FlxStringUtil.formatMoney(notes.length + sustainNotes.length, false);
+			renderedTxt.text = 'Rendered Notes: ' + FlxStringUtil.formatMoney(notes.length, false);
 
 		callOnLuas('onUpdate', [elapsed]);
 
@@ -5332,17 +5365,30 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 			health = maxHealth;
 		}
 
-		// I got special permission from AT to use this from Denpa engine, since the old code was a mess & buggy
-		// or should I say, dennnnpaaaa
-		iconP1.animation.curAnim.curFrame = switch (iconP1.type) {
-			case SINGLE: 0;
-			case WINNING: (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80) ? 2 : (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20) ? 1 : 0));
-            default: (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20) ? 1 : 0);
+		if (iconP1.animation.numFrames == 3) {
+			if (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20))
+				iconP1.animation.curAnim.curFrame = 1;
+			else if (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80))
+				iconP1.animation.curAnim.curFrame = 2;
+			else
+				iconP1.animation.curAnim.curFrame = 0;
+		} 
+		else {
+			if (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20))
+				iconP1.animation.curAnim.curFrame = 1;
 		}
-		iconP2.animation.curAnim.curFrame = switch (iconP2.type) {
-			case SINGLE: 0;
-			case WINNING: (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80) ? 1 : (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20) ? 2 : 0));
-            default: (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80) ? 1 : 0);
+		if (iconP2.animation.numFrames == 3) {
+			if (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80))
+				iconP2.animation.curAnim.curFrame = 1;
+			else if (healthBar.percent < (ClientPrefs.longHPBar ? 15 : 20))
+				iconP2.animation.curAnim.curFrame = 2;
+			else 
+				iconP2.animation.curAnim.curFrame = 0;
+		} else {
+			if (healthBar.percent > (ClientPrefs.longHPBar ? 85 : 80))
+				iconP2.animation.curAnim.curFrame = 1;
+			else 
+				iconP2.animation.curAnim.curFrame = 0;
 		}
 
 		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene) {
@@ -5578,8 +5624,6 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 								}
 							}
 						}
-						if (daNote.isSustainNote && (daNote.wasGoodHit || daNote.hitByOpponent) && daNote.strumTime + (daNote.sustainLength + 5) <= Conductor.songPosition) //5 ms later so we remove the note when it's actually behind the strum
-							sustainNotes.remove(daNote, true);
 					});
 				}
 				else
@@ -5621,7 +5665,10 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 		if(ffmpegMode && !noCapture)
 		{
 			var filename = CoolUtil.zeroFill(frameCaptured, 7);
-			capture.save(Paths.formatToSongPath(SONG.song) + '\\', filename);
+			capture.save(Paths.formatToSongPath(SONG.song) + #if linux '/' #else '\\' #end, filename);
+			#if windows //linux and mac should have good pcs iirc
+				if (!memoryOver6GB) openfl.system.System.gc();
+			#end
 		}
 		frameCaptured++;
 
@@ -6170,6 +6217,9 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 							setOnLuas('gfName', gf.curCharacter);
 						}
 				}
+				shouldDrainHealth = (opponentDrain || (opponentChart ? boyfriend.healthDrain : dad.healthDrain));
+				if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainAmount)) healthDrainAmount = opponentChart ? boyfriend.drainAmount : dad.drainAmount;
+				if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainFloor)) healthDrainFloor = opponentChart ? boyfriend.drainFloor : dad.drainFloor;
 				if (!ClientPrefs.ogHPColor) reloadHealthBarColors(dad.healthColorArray, boyfriend.healthColorArray);
 				if (ClientPrefs.showNotes)
 				{
@@ -7069,7 +7119,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 		final noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset) / playbackRate;
 		final wife:Float = EtternaFunctions.wife3(noteDiff, Conductor.timeScale) / playbackRate;
 
-		if (!miss) vocals.volume = 1;
+		if (!miss && !ffmpegMode) vocals.volume = 1;
 
 		final offset = FlxG.width * 0.35;
 		if(ClientPrefs.scoreZoom && !ClientPrefs.hideScore && !cpuControlled && !miss)
@@ -8160,7 +8210,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 				}
 			}
 			note.wasGoodHit = true;
-			if (ClientPrefs.songLoading) vocals.volume = 1;
+			if (ClientPrefs.songLoading && !ffmpegMode) vocals.volume = 1;
 
 			final isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
 			final leData:Int = Math.round(Math.abs(note.noteData));
@@ -8296,7 +8346,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 				spawnNoteSplashOnNote(true, daNote, daNote.gfNote);
 			}
 
-			if (SONG.needsVoices)
+			if (SONG.needsVoices && !ffmpegMode)
 				vocals.volume = 1;
 
 				if (polyphony > 1 && !daNote.isSustainNote) opponentNoteTotal += polyphony - 1;
@@ -8340,8 +8390,8 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
 			if (!ClientPrefs.hideScore && scoreTxtUpdateFrame <= 4) updateScore();
            		if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
-			if (opponentDrain && health > 0.1 && !practiceMode || opponentDrain && practiceMode) {
-			health -= daNote.hitHealth * hpDrainLevel * polyphony;
+			if (shouldDrainHealth && health > healthDrainFloor && !practiceMode || opponentDrain && practiceMode) {
+			health -= (opponentDrain ? daNote.hitHealth : healthDrainAmount) * hpDrainLevel * polyphony;
 			if (ClientPrefs.healthDisplay && !ClientPrefs.hideScore && scoreTxtUpdateFrame <= 4 && scoreTxt != null) updateScore();
 			}
 
@@ -8577,6 +8627,7 @@ if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray
 		luaArray = [];
 
 		camFollow.put();
+		strumLine.put();
 
 		#if hscript
 		if(FunkinLua.hscript != null) FunkinLua.hscript = null;

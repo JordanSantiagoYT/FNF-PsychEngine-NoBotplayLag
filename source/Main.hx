@@ -16,6 +16,8 @@ import lime.app.Application;
 import DiscordClient;
 import cpp.vm.Gc;
 #end
+import haxe.io.Input;
+import haxe.io.BytesBuffer;
 // crash handler stuff
 #if CRASH_HANDLER
 import openfl.events.UncaughtErrorEvent;
@@ -24,6 +26,10 @@ import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
+#end
+
+#if linux
+import lime.graphics.Image;
 #end
 
 using StringTools;
@@ -156,6 +162,11 @@ class Main extends Sprite {
 
 		FlxG.autoPause = false;
 
+		#if linux
+		var icon = Image.fromFile("icon.png");
+		Lib.current.stage.window.setIcon(icon);
+		#end
+
 		#if html5
 		FlxG.mouse.visible = false;
 		#end
@@ -176,6 +187,44 @@ class Main extends Sprite {
 
 	public static function changeFPSColor(color:FlxColor) {
 		fpsVar.textColor = color;
+	}
+
+	public static function readLine(buff:Input, l:Int):String {
+		var line:Int = 0;
+		var fuck = 0;
+		while(fuck < l + 1) {
+			var buf = new BytesBuffer();
+			var last:Int = 0;
+			var s = "";
+
+			trace(line);
+			while ((last = buff.readByte()) != 10) {
+				buf.addByte(last);
+			}
+			s = buf.getBytes().toString();
+			if (s.charCodeAt(s.length - 1) == 13)
+				s = s.substr(0, -1);
+			if (line >= l) {
+				return s;
+			} else {
+				line++;
+			}
+		}
+		return "";
+	}
+
+	public static function getMemoryAmount():Float {
+		#if windows
+			try {
+				var process = new Process('wmic ComputerSystem get TotalPhysicalMemory').stdout;
+				var amount:Float = Std.parseFloat(readLine(process, 1));
+				return amount;
+			} catch(e) {
+				return Math.pow(2, 32);
+			}
+		#else 
+			return Math.pow(2, 32); // 4gb
+		#end
 	}
 
 	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!

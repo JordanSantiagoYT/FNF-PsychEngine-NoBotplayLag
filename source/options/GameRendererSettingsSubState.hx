@@ -38,7 +38,7 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
 		rpcTitle = 'Game Renderer Settings Menu'; //for Discord Rich Presence
 
 		var option:Option = new Option('Video Rendering Mode', //Name
-			'If checked, the game will render each frame as a screenshot into a folder. They can then be rendered into MP4s using FFmpeg.\nThey are located in a folder called gameRenders',
+			'If checked, the game will render each frame as a screenshot into a folder. They can then be rendered into MP4s using FFmpeg.\nThey are located in a folder called gameRenders.\nDo NOT use this if you have a low-end PC!',
 			'ffmpegMode',
 			'bool',
 			false);
