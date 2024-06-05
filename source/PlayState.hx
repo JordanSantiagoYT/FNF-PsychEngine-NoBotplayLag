@@ -7672,14 +7672,14 @@ class PlayState extends MusicBeatState
 				(songMisses > 0 && songMisses < 10), // 'FC'
 				(shits >= 10), // 'Clear'
 				(shits >= 100), // 'TDCB'
-				(shits >= 1000) // 'QDCB
+				(shits >= 1000) // 'QDCB'
 			];
 			
 			ratingFC = "";
 			for (i in 0...fcConditions.length)
 			{
 				if (fcConditions[i]) {
-					ratingFC = fcConditions[i];
+					ratingFC = fcStrings[i];
 					break;
 				}
 			}
