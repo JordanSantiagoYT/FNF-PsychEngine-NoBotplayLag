@@ -7707,7 +7707,7 @@ class PlayState extends MusicBeatState
 			];
 
 			ratingCool = "";
-			for (i in ratingConditions.length)
+			for (i in 0...ratingConditions.length)
 			{
 				if (ratingConditions[i][0]) {
 					ratingCool = ratingConditions[i][1];
