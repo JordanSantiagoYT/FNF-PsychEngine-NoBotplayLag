@@ -7655,37 +7655,65 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			// Rating FC
+			/**
+			 * - Rating FC and other stuff -
+			 *
+			 * > Now with better evaluation instead of using regular spaghetti code
+			 *
+			 * # @Equinoxtic was here, hi :3
+			 */
+
+			final fcConditions:Array<Bool> = [
+				(totalPlayed == 0), // 'No Play'
+				(perfects > 0), // 'PFC'
+				(sicks > 0), // 'SFC'
+				(goods > 0), // 'GFC'
+				(shits > 0), // 'BFC'
+				(songMisses > 0 && songMisses < 10), // 'FC'
+				(shits >= 10), // 'Clear'
+				(shits >= 100), // 'TDCB'
+				(shits >= 1000) // 'QDCB
+			];
+			
 			ratingFC = "";
-				if (totalPlayed == 0) ratingFC = fcStrings[0];
-				if (perfects > 0) ratingFC = fcStrings[1];
-				if (sicks > 0) ratingFC = fcStrings[2];
-				if (goods > 0) ratingFC = fcStrings[3];
-				if (bads > 0) ratingFC = fcStrings[4];
-				if (shits > 0) ratingFC = fcStrings[5];
-				if (songMisses > 0 && songMisses < 10) ratingFC = fcStrings[6];
-				if (songMisses >= 10) ratingFC = fcStrings[7];
-				if (songMisses >= 100) ratingFC = fcStrings[8];
-				if (songMisses >= 1000) ratingFC = fcStrings[9];
+			for (i in 0...fcConditions.length)
+			{
+				if (fcConditions[i]) {
+					ratingFC = fcConditions[i];
+					break;
+				}
+			}
+
+			var accuracy:Float = (ratingPercent * 100);
+
+			final ratingConditions:Array<Dynamic> = [
+				[ accuracy >= 99.9935, "AAAAA" ],
+				[ accuracy >= 99.980, "AAAA:" ],
+				[ accuracy >= 99.970, "AAAA." ],
+				[ accuracy >= 99.955, "AAAA" ],
+				[ accuracy >= 99.90, "AAA:" ],
+				[ accuracy >= 99.80, "AAA." ],
+				[ accuracy >= 99.70, "AAA" ],
+				[ accuracy >= 99.00, "AA:" ],
+				[ accuracy >= 96.50, "AA." ],
+				[ accuracy >= 93.00, "AA" ],
+				[ accuracy >= 90.00, "A:" ],
+				[ accuracy >= 85.00, "A." ],
+				[ accuracy >= 80.00, "A" ],
+				[ accuracy >= 70.00, "B" ],
+				[ accuracy >= 60.00, "C" ],
+				[ accuracy >= 50.00, "D" ],
+				[ accuracy < 50.00, "F" ]
+			];
 
 			ratingCool = "";
-			if (ratingPercent*100 <= 60) ratingCool = " F";
-			if (ratingPercent*100 >= 60) ratingCool = " D";
-			if (ratingPercent*100 >= 60) ratingCool = " C";
-			if (ratingPercent*100 >= 70) ratingCool = " B";
-			if (ratingPercent*100 >= 80) ratingCool = " A";
-			if (ratingPercent*100 >= 85) ratingCool = " A.";
-			if (ratingPercent*100 >= 90) ratingCool = " A:";
-			if (ratingPercent*100 >= 93) ratingCool = " AA";
-			if (ratingPercent*100 >= 96.50) ratingCool = " AA.";
-			if (ratingPercent*100 >= 99) ratingCool = " AA:";
-			if (ratingPercent*100 >= 99.70) ratingCool = " AAA";
-			if (ratingPercent*100 >= 99.80) ratingCool = " AAA.";
-			if (ratingPercent*100 >= 99.90) ratingCool = " AAA:";
-			if (ratingPercent*100 >= 99.955) ratingCool = " AAAA";
-			if (ratingPercent*100 >= 99.970) ratingCool = " AAAA.";
-			if (ratingPercent*100 >= 99.980) ratingCool = " AAAA:";
-			if (ratingPercent*100 >= 99.9935) ratingCool = " AAAAA";
+			for (i in ratingConditions.length)
+			{
+				if (ratingConditions[i][0]) {
+					ratingCool = ratingConditions[i][1];
+					break;
+				}
+			}
 
 			// basically same stuff, doesn't update every frame but it also means no memory leaks during botplay
 			if (ClientPrefs.ratingCounter && judgementCounter != null)
