@@ -9,33 +9,54 @@
   <b>JS Engine is a heavily modified Psych Engine fork I made, with lower-end PCs and more customization in mind while also aiming to be a replacement for OS Engine.</b>
 </h3>
 
-**WARNING: SET HXCODEC TO 2.5.1 TO FIX CRASHES WITH EXTRA KEYS WITH LUA SCRIPTS**
+README.md revamped by [Nael2xd](https://youtube.com/@nael2xd?si=axwJrY_8jdlXUwSm)
 
-# FEATURES IN JS ENGINE:
-This fork of psych engine 0.6.3 has lots of features, even more than OS ENGINE!
+## Welcome
 
-The engine:
-- Can load notes more than 100k instead of closing the window
-- Can load longer than 20m30s songs
-- Has lots of optimization
-- Can chart bambi songs EASIER
-- Has basic shader support (such as `addGlitchEffect`, `addChromaticAbberationEffect`, and more!)
-- Can turn your bad pc into a better pc if you are having trouble lagging hard in the base one.
-- Is spam friendly
-- Has some cool features you might want to try it out
-- Uses 0.6.3 instead of the new ones (such as 0.7.3)
+Hello and welcome to JS Engine's github repo, where you can download the engine and make spammy charts or have fun with the engine.
 
-(and possibly more stuff that will be listed here...)
+This contains lots and lots of customizable and features built in to JS Engine, if you wanna see most of them listed, you can see it below this text
 
-## FAQ
+# Features/Performances in JS ENGINE
+
+This fork of this engine has tons of features and performances, most will be listed but some of them won't because there's a lot of it.
+
+The features/performances included are:
+- No BotPlay lag!
+- Faster Song Loading!
+- Loading songs longer than 20 minutes!
+- Note Performance!
+- Loading 100k+ notes without closing the window!
+- Basic Shader Support! (for a full list, it can be seen in [here](https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag/wiki#q-what-are-all-the-basic-shaders-that-come-with-this-engine))
+- Rendering mode! (Originally used for lua and gamerenderer-engine)
+- Built in Song Credits! (on chart editor)
+
+There is like lots and lots of stuff i've missed, but at least you would like those features built in **JS ENGINE**
+
+# Screenshots
+
+Here are some screenshots of what the engine looks like. 
+
+![Screenshot 2024-07-07 14-00-00](https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag/assets/108278470/d4e89995-fa14-40bf-a5d6-d1647548fd93)
+
+![Screenshot 2024-07-07 14-01-15](https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag/assets/108278470/b6d7d5ef-196d-4c39-9055-97815d63cdf0)
+
+![Screenshot 2024-07-07 13-58-45](https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag/assets/108278470/a65ea8b5-8b0d-4643-b7e0-cddd3972422b)
+
+# FAQs
+
+Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag/wiki) or you can simply see it below.
 
 Q: Can I use this engine for my mod(s)?
+
 A: Yes, you can! just be sure to credit me (@JordanSantiago on YouTube) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-PsychEngine-NoBotplayLag/releases/latest)
 
 Q: How do I (change the background, add characters, etc.)?
+
 A: You do it here the same way you'd do it in Psych Engine.
 
-## Installation:
+# Compiling JS Engine
+
 You must have [the most up-to-date version of Haxe](https://haxe.org/download/), seriously, stop using 4.1.5, it misses some stuff.
 
 If you don't have Microsoft Visual Studio Community installed, install it. While running the installer, make sure to check the following two:
@@ -43,8 +64,6 @@ If you don't have Microsoft Visual Studio Community installed, install it. While
 MSVC v142 - VS 2019 C++ x64/x86 build tools (Version doesn't matter)
 
 Windows 10/11 SDK (Any version)
-
-
 
 The source code should come with a "Quick SETUP" batch file. Run it in order to install all the needed libraries for *JS Engine!*
 
@@ -61,7 +80,7 @@ to start you off, disabling Videos should be simple, simply Delete the line `"VI
 
 same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, this and other customization options are all available within the `Project.xml` file
 <details>
-  <summary><h2>Credits and stuff below</h2></summary>
+  <summary><h2>OG Psych Engine Credits and Stuff</h2></summary>
   
 * Shadow Mario - Programmer
 * RiverOaken - Artist
