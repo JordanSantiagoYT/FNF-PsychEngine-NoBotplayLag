@@ -96,7 +96,7 @@ class CreditsState extends MusicBeatState
 			['cabfile',			'cabfile',				'Created the new Video Rendering Mode for FNF',								'https://github.com/cabfile',			'DDDDDD'],
 			['SomeGuyWhoLovesCoding',			'sgwlc',				'Rewrote the chart loading system and ported the new Rendering Mode to source',								'https://www.youtube.com/channel/UCMSusVA3DY-4EtiGP4zKAJA',			'FFBD40'],
 			['Betopia', 'nothing', 'Freeplay Search bar creator', 'https://www.youtube.com/channel/UCfjyz9xRhZiRbLMteQloVeg', 'FFFFFF'],
-			['CDEV Engine', 'toolazytomakeicon', 'Update Screen Creator', 'https://github.com/Core5570RYT/FNF-CDEV-Engine', '00427B'],
+			['CDEV Engine', 'cdev', 'Update Screen Creator', 'https://github.com/Core5570RYT/FNF-CDEV-Engine', '00427B'],
 			['Psych Engine Team'],
 			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',								'https://twitter.com/Shadow_Mario_',	'444444'],
 			['RiverOaken',			'river',			'Main Artist/Animator of Psych Engine',							'https://twitter.com/RiverOaken',		'B42F71'],
