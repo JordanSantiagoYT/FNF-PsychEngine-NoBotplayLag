@@ -25,6 +25,12 @@ import lime.graphics.Image;
 
 using StringTools;
 
+#if linux
+@:cppInclude('./external/gamemode_client.h')
+@:cppFileCode('
+	#define GAMEMODE_AUTO
+')
+#end
 class Main extends openfl.display.Sprite {
 	var game = {
 		width: 1280,
@@ -109,6 +115,10 @@ class Main extends openfl.display.Sprite {
 		SetProcessDPIAware()
 		')
 		#end
+		// Credits to MAJigsaw77 (he's the og author for this code)
+		#if ios
+		Sys.setCwd(lime.system.System.applicationStorageDirectory);
+		#end
 		setupGame();
 	}
 
@@ -147,10 +157,6 @@ class Main extends openfl.display.Sprite {
 		#if linux
 		var icon = Image.fromFile("icon.png");
 		Lib.current.stage.window.setIcon(icon);
-		#end
-
-		#if html5
-		FlxG.mouse.visible = false;
 		#end
 
 		#if CRASH_HANDLER
