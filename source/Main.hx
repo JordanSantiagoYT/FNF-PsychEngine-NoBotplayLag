@@ -207,8 +207,8 @@ class Main extends openfl.display.Sprite {
 		Sys.println("Crash dump saved in " + Path.normalize(path));
 
 		Application.current.window.alert(errorMessage, "Error! JS Engine v" + MainMenuState.psychEngineJSVersion + " (" + Main.__superCoolErrorMessagesArray[FlxG.random.int(0, Main.__superCoolErrorMessagesArray.length)] + ")");
-		#if desktop
-		DiscordClient.close();
+		#if DISCORD_ALLOWED
+		DiscordClient.shutdown();
 		#end
 		Sys.exit(1);
 	}
