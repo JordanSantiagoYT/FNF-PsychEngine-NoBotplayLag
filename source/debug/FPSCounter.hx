@@ -7,11 +7,6 @@ import lime.system.System;
 
 class FPSCounter extends TextField
 {
-	/**
-		The current frame rate, expressed using frames-per-second
-	**/
-	public static var instance:FPSCounter;
-
 	public var currentFPS(default, null):Float;
 
 	/**
