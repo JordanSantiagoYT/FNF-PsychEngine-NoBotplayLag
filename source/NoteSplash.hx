@@ -108,7 +108,7 @@ class NoteSplash extends FlxSprite
 
 	function loadAnims(skin:String) {
 		maxAnims = 0;
-		if (!Paths.splashSkinFramesMap.exists(skin)) Paths.initSplash(4, skin);
+		if (!Paths.splashSkinFramesMap.exists(skin)) Paths.initSplash(skin);
 		frames = Paths.splashSkinFramesMap.get(skin);
 		animation.copyFrom(Paths.splashSkinAnimsMap.get(skin));
 	}

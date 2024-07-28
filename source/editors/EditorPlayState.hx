@@ -63,7 +63,6 @@ class EditorPlayState extends MusicBeatState
 	var botplayTxt:FlxText;
 	
 	var timerToStart:Float = 0;
-	private var noteTypeMap:Map<String, Bool> = new Map<String, Bool>();
 	
 	// Less laggy controls
 	private var keysArray:Array<Dynamic>;
@@ -113,23 +112,9 @@ class EditorPlayState extends MusicBeatState
 		grpNoteSplashes.add(splash);
 		splash.alpha = 0.0;
 
-		Paths.initDefaultSkin(4, PlayState.SONG.arrowSkin);
+		Paths.initDefaultSkin(PlayState.SONG.arrowSkin);
 
 		generateSong(PlayState.SONG.song, startPos);
-		#if (LUA_ALLOWED && MODS_ALLOWED)
-		for (notetype in noteTypeMap.keys()) {
-			var luaToLoad:String = Paths.modFolders('custom_notetypes/' + notetype + '.lua');
-			if(sys.FileSystem.exists(luaToLoad)) {
-				var lua:editors.EditorLua = new editors.EditorLua(luaToLoad);
-				new FlxTimer().start(0.1, function (tmr:FlxTimer) {
-					lua.stop();
-					lua = null;
-				});
-			}
-		}
-		#end
-		noteTypeMap.clear();
-		noteTypeMap = null;
 
 		scoreTxt = new FlxText(10, FlxG.height - 50, FlxG.width - 20, "Hits: 0 | Misses: 0", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -176,7 +161,7 @@ class EditorPlayState extends MusicBeatState
 		}
 
 		Paths.initNote(4, PlayState.SONG.arrowSkin);
-		Paths.initDefaultSkin(4, PlayState.SONG.arrowSkin);
+		Paths.initDefaultSkin(PlayState.SONG.arrowSkin);
 
 		super.create();
 	}
@@ -267,10 +252,6 @@ class EditorPlayState extends MusicBeatState
 					if (swagNote.noteskin.length > 0 && !Paths.noteSkinFramesMap.exists(swagNote.noteskin)) Paths.initNote(4, swagNote.noteskin);
 
 					if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
-		
-					if (!noteTypeMap.exists(swagNote.noteType)) {
-						noteTypeMap.set(swagNote.noteType, true);
-					}
 		
 					inline unspawnNotes.push(swagNote);
 				

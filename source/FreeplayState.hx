@@ -592,7 +592,7 @@ class FreeplayState extends MusicBeatState
 						noteCount += section.sectionNotes.length;
 						requiredRamLoad += 72872 * section.sectionNotes.length;
 						}
-						CoolUtil.coolError("There are " + FlxStringUtil.formatMoney(noteCount, false) + " notes in this chart!\nWith Show Notes turned on, you'd need " + CoolUtil.formatBytes((requiredRamLoad / 2), false, 2) + " of ram to load this.", "JS Engine Chart Diagnosis");
+						CoolUtil.coolError("There are " + FlxStringUtil.formatMoney(noteCount, false) + " notes in this chart!\nWith Show Notes turned on, you'd need " + FlxStringUtil.formatBytes((requiredRamLoad / 2), false, 2) + " of ram to load this.", "JS Engine Chart Diagnosis");
 					}
 					player.playingMusic = true;
 					player.curTime = 0;

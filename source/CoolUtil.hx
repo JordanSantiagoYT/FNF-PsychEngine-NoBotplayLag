@@ -551,7 +551,6 @@ class CoolUtil
 		#end
 	}
 
-
 	public static function numberArray(max:Int, ?min = 0):Array<Int>
 	{
 		var dumbArray:Array<Int> = [];
@@ -560,15 +559,6 @@ class CoolUtil
 			dumbArray.push(i);
 		}
 		return dumbArray;
-	}
-
-	//uhhhh does this even work at all? i'm starting to doubt
-	public static function precacheSound(sound:String, ?library:String = null):Void {
-		Paths.sound(sound, library);
-	}
-
-	public static function precacheMusic(sound:String, ?library:String = null):Void {
-		Paths.music(sound, library);
 	}
 
 	public static function browserLoad(site:String) {
@@ -594,73 +584,6 @@ class CoolUtil
 		}
 		return total;
 	}
-
-	/*
-	 * List of formatting for different byte amounts
-	 * in an array formatted like this:
-	 * 
-	 * [`Format`, `Divisor`]
-	 */
-	 public static var byte_formats:Array<Array<Dynamic>> = [
-		["$bytes B", 1.0],
-		["$bytes KB", 1024.0],
-		["$bytes MB", 1048576.0],
-		["$bytes GB", 1073741824.0],
-		["$bytes TB", 1099511627776.0],
-		["$bytes PB", 1125899906842624.0],
-		["$bytes EB", 1152921504606846976.0]
-	];
-
-	/**
-	 * Formats `bytes` into a `String`.
-	 * 
-	 * Examples (Input = Output)
-	 * 
-	 * ```
-	 * 1024 = '1 kb'
-	 * 1536 = '1.5 kb'
-	 * 1048576 = '2 mb'
-	 * ```
-	 * 
-	 * @param bytes Amount of bytes to format and return.
-	 * @param onlyValue (Optional, Default = `false`) Whether or not to only format the value of bytes (ex: `'1.5 mb' -> '1.5'`).
-	 * @param precision (Optional, Default = `2`) The precision of the decimal value of bytes. (ex: `1 -> 1.5, 2 -> 1.53, etc`).
-	 * @return Formatted byte string.
-	 */
-	public static function formatBytes(bytes:Float, onlyValue:Bool = false, precision:Int = 2):String {
-		var formatted_bytes:String = "?";
-
-		for (i in 0...byte_formats.length) {
-			// If the next byte format has a divisor smaller than the current amount of bytes,
-			// and thus not the right format skip it.
-			if (byte_formats.length > i + 1 && byte_formats[i + 1][1] < bytes)
-				continue;
-
-			var format:Array<Dynamic> = byte_formats[i];
-
-			if (!onlyValue)
-				formatted_bytes = StringTools.replace(format[0], "$bytes", Std.string(FlxMath.roundDecimal(bytes / format[1], precision)));
-			else
-				formatted_bytes = Std.string(FlxMath.roundDecimal(bytes / format[1], precision));
-
-			break;
-		}
-
-		return formatted_bytes;
-	}
-
-	public static function getSizeLabel(num:UInt):String{
-        var size:Float = num;
-        var data = 0;
-        var dataTexts = ["B", "KB", "MB", "GB", "TB", "PB"]; // IS THAT A QT MOD REFERENCE!!!??!!111!!11???
-        while(size > 1024 && data < dataTexts.length - 1) {
-          data++;
-          size = size / 1024;
-        }
-        
-        size = Math.round(size * 100) / 100;
-        return size + " " + dataTexts[data];
-    }
 
 	/** Quick Function to Fix Save Files for Flixel 5
 		if you are making a mod, you are gonna wanna change "ShadowMario" to something else

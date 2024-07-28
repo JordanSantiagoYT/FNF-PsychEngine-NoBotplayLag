@@ -163,14 +163,7 @@ class Main extends openfl.display.Sprite {
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		#end
 
-		#if desktop
-		if (!DiscordClient.initialized) {
-			DiscordClient.initialize();
-			Application.current.window.onClose.add(function() {
-				DiscordClient.close();
-			});
-		}
-		#end
+		#if DISCORD_ALLOWED DiscordClient.prepare(); #end
 	}
 
 	public static function changeFPSColor(color:FlxColor) {

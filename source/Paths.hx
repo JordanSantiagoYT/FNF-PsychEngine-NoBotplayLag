@@ -39,6 +39,7 @@ import neko.vm.Gc;
 
 using StringTools;
 
+@:access(openfl.display.BitmapData)
 class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
@@ -83,7 +84,7 @@ class Paths
 
 	public static var defaultSkin = 'NOTE_assets'; 
 	//Function that initializes the first note. This way, we can recycle the notes
-	public static function initDefaultSkin(keys:Int = 4, noteSkin:String, inEditor:Bool = false)
+	public static function initDefaultSkin(noteSkin:String, inEditor:Bool = false)
 	{
 		if (ClientPrefs.noteStyleThing == 'Default')
 			defaultSkin = 'NOTE_assets';
@@ -141,7 +142,7 @@ class Paths
 	}
 
 	//Note Splash initialization
-	public static function initSplash(keys:Int = 4, splashSkin:String = 'noteSplashes')
+	public static function initSplash(splashSkin:String = 'noteSplashes')
 	{
 		splashFrames = getSparrowAtlas(splashSkin.length > 1 ? 'noteSplashes/' + splashSkin : 'noteSplashes/noteSplashes');
 		if (splashFrames == null) splashFrames = getSparrowAtlas(splashSkin.length > 1 ? splashSkin : 'noteSplashes/noteSplashes');
@@ -314,21 +315,13 @@ class Paths
 	/// haya I love you for the base cache dump I took to the max
 	public static function clearUnusedMemory() {
 		// clear non local assets in the tracked assets list
-		for (key in currentTrackedAssets.keys()) {
+		for (key in currentTrackedAssets.keys())
+		{
 			// if it is not currently contained within the used local assets
-			if (!localTrackedAssets.contains(key) && !dumpExclusions.contains(key)) {
-				var obj = currentTrackedAssets.get(key);
-				@:privateAccess
-				if (obj != null) {
-					// remove the key from all cache maps
-					FlxG.bitmap._cache.remove(key);
-					openfl.Assets.cache.removeBitmapData(key);
-					currentTrackedAssets.remove(key);
-					// and get rid of the object
-					obj.persist = false; // make sure the garbage collector actually clears it up
-					obj.destroyOnNoUse = true;
-					obj.destroy();
-				}
+			if (!localTrackedAssets.contains(key) && !dumpExclusions.contains(key))
+			{
+				destroyGraphic(currentTrackedAssets.get(key)); // get rid of the graphic
+				currentTrackedAssets.remove(key); // and remove the key from local cache map
 			}
 		}
 		// run the garbage collector for good measure lmfao
@@ -340,15 +333,10 @@ class Paths
 	public static var localTrackedAssets:Array<String> = [];
 	public static function clearStoredMemory(?cleanUnused:Bool = false) {
 		// clear anything not in the tracked assets list
-		@:privateAccess
 		for (key in FlxG.bitmap._cache.keys())
 		{
-			var obj = FlxG.bitmap._cache.get(key);
-			if (obj != null && !currentTrackedAssets.exists(key)) {
-				openfl.Assets.cache.removeBitmapData(key);
-				FlxG.bitmap._cache.remove(key);
-				obj.destroy();
-			}
+			if (!currentTrackedAssets.exists(key))
+				destroyGraphic(FlxG.bitmap.get(key));
 		}
 		// clear all sounds that are cached
 		for (key in currentTrackedSounds.keys()) {
@@ -364,6 +352,14 @@ class Paths
 		#if !html5 openfl.Assets.cache.clear("songs"); #end
 		gc(true);
 		compress();
+	}
+
+	inline static function destroyGraphic(graphic:FlxGraphic)
+	{
+		// free some gpu memory
+		if (graphic != null && graphic.bitmap != null && graphic.bitmap.__texture != null)
+			graphic.bitmap.__texture.dispose();
+		FlxG.bitmap.remove(graphic);
 	}
 
 	static public var currentModDirectory:String = '';

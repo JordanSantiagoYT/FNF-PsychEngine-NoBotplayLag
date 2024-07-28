@@ -307,6 +307,8 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 				Reflect.setField(FlxG.sound, flixelS, flxProp);
 		}
 
+		#if DISCORD_ALLOWED DiscordClient.check(); #end
+
 		var save:FlxSave = new FlxSave();
 		save.bind('controls_v2', CoolUtil.getSavePath());
 		if (save != null && save.data.customControls != null)

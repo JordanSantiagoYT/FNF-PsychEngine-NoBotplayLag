@@ -297,7 +297,7 @@ class ChartingState extends MusicBeatState
 		hitsound = FlxG.sound.load(Paths.sound("hitsounds/" + 'osu!mania'));
 		hitsound.volume = 1;
 
-		Paths.initDefaultSkin(4, _song.arrowSkin, true);
+		Paths.initDefaultSkin(_song.arrowSkin, true);
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -822,7 +822,7 @@ class ChartingState extends MusicBeatState
 		var reloadNotesButton:FlxButton = new FlxButton(noteSplashesInputText.x + 5, noteSplashesInputText.y + 20, 'Change Notes', function() {
 			_song.arrowSkin = noteSkinInputText.text;
 			selectionNote.texture = noteSkinInputText.text;
-			Paths.initDefaultSkin(4, noteSkinInputText.text, true);
+			Paths.initDefaultSkin(noteSkinInputText.text, true);
 			updateGrid();
 		});
 

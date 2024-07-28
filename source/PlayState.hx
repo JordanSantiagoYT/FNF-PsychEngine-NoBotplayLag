@@ -877,7 +877,7 @@ class PlayState extends MusicBeatState
 		}
 
 		Paths.initNote(4, SONG.arrowSkin);
-		Paths.initDefaultSkin(4, SONG.arrowSkin);
+		Paths.initDefaultSkin(SONG.arrowSkin);
 
 		if(isPixelStage) {
 			introSoundsSuffix = '-pixel';
