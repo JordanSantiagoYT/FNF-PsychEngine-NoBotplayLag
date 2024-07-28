@@ -80,8 +80,6 @@ class SuperSecretDebugMenu extends BaseOptionsMenu
 			'rainbowFPS',
 			'bool',
 			false);
-
-		option.onChange = onChangeRainbowFPS;
 		addOption(option);
 
 		super();
@@ -152,13 +150,5 @@ class SuperSecretDebugMenu extends BaseOptionsMenu
 		}
     
     		FlxG.switchState(OutdatedState.new);
-	}
-
-	function onChangeRainbowFPS()
-	{
-		if(!ClientPrefs.rainbowFPS)
-		{
-			Main.changeFPSColor(0xFFFFFFFF);
-		}
 	}
 }

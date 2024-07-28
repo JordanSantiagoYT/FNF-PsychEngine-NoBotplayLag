@@ -1,20 +1,11 @@
 package;
 
-import flixel.graphics.FlxGraphic;
-import flixel.FlxG;
 import flixel.FlxGame;
-import flixel.FlxState;
-import openfl.Assets;
 import openfl.Lib;
-import flixel.util.FlxColor;
-import openfl.display.FPS;
-import openfl.display.Sprite;
-import openfl.events.Event;
-import openfl.display.StageScaleMode;
+import debug.FPSCounter;
 import lime.app.Application;
 #if desktop
 import DiscordClient;
-import cpp.vm.Gc;
 #end
 import haxe.io.Input;
 import haxe.io.BytesBuffer;
@@ -26,7 +17,6 @@ import haxe.CallStack;
 import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File;
-import sys.io.Process;
 #end
 
 #if linux
@@ -35,7 +25,7 @@ import lime.graphics.Image;
 
 using StringTools;
 
-class Main extends Sprite {
+class Main extends openfl.display.Sprite {
 	var game = {
 		width: 1280,
 		height: 720,
@@ -46,8 +36,7 @@ class Main extends Sprite {
 		startFullscreen: false
 	};
 
-	public static var fpsVar:FPS;
-	public static var changeID:Int = 0;
+	public static var fpsVar:FPSCounter;
 
 	public static var superDangerMode:Bool = Sys.args().contains("-troll");
 
@@ -120,19 +109,6 @@ class Main extends Sprite {
 		SetProcessDPIAware()
 		')
 		#end
-
-		if (stage != null) {
-			init();
-		} else {
-			addEventListener(Event.ADDED_TO_STAGE, init);
-		}
-	}
-
-	private function init(?E:Event):Void {
-		if (hasEventListener(Event.ADDED_TO_STAGE)) {
-			removeEventListener(Event.ADDED_TO_STAGE, init);
-		}
-
 		setupGame();
 	}
 
@@ -153,10 +129,9 @@ class Main extends Sprite {
 
 		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
-		fpsVar = new FPS(10, 3, 0xFFFFFF);
+		fpsVar = new FPSCounter(10, 3, 0x00FFFFFF);
 		addChild(fpsVar);
-		Lib.current.stage.align = "tl";
-		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
+
 		if (fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 		}
@@ -194,44 +169,6 @@ class Main extends Sprite {
 
 	public static function changeFPSColor(color:FlxColor) {
 		fpsVar.textColor = color;
-	}
-
-	public static function readLine(buff:Input, l:Int):String {
-		var line:Int = 0;
-		var fuck = 0;
-		while(fuck < l + 1) {
-			var buf = new BytesBuffer();
-			var last:Int = 0;
-			var s = "";
-
-			//trace(line);
-			while ((last = buff.readByte()) != 10) {
-				buf.addByte(last);
-			}
-			s = buf.getBytes().toString();
-			if (s.charCodeAt(s.length - 1) == 13)
-				s = s.substr(0, -1);
-			if (line >= l) {
-				return s;
-			} else {
-				line++;
-			}
-		}
-		return "";
-	}
-
-	public static function getMemoryAmount():Float {
-		#if windows
-			try {
-				var process = new Process('wmic ComputerSystem get TotalPhysicalMemory').stdout;
-				var amount:Float = Std.parseFloat(readLine(process, 1));
-				return amount;
-			} catch(e) {
-				return Math.pow(2, 32);
-			}
-		#else 
-			return Math.pow(2, 32); // 4gb
-		#end
 	}
 
 	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!

@@ -10,14 +10,6 @@ package external.memory;
 @:include("memory.h")
 extern class Memory {
 	/**
-	 * Returns the peak (maximum so far) resident set size (physical
-	 * memory use) measured in bytes, or zero if the value cannot be
-	 * determined on this OS.
-	 */
-	@:native("getPeakRSS")
-	public static function getPeakUsage():Float;
-
-	/**
  	 * Returns the current resident set size (physical memory use) measured
  	 * in bytes, or zero if the value cannot be determined on this OS.
 	 */
@@ -30,12 +22,6 @@ extern class Memory {
  * @author Leather128
  */
 class Memory {
-	/**
-	 * (Non cpp platform)
-	 * Returns 0.
-	 */
-	public static function getPeakUsage():Float return 0.0;
-
 	/**
 	 * (Non cpp platform)
 	 * Returns 0.
