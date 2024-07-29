@@ -66,6 +66,9 @@ class TitleState extends MusicBeatState
 		#if LUA_ALLOWED
 		Paths.pushGlobalMods();
 		#end
+
+		AlphaCharacter.loadAlphabetData();
+
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
 		WeekData.loadTheFirstEnabledMod();
 		MusicBeatState.windowNamePrefix = Assets.getText(Paths.txt("windowTitleBase", "preload"));

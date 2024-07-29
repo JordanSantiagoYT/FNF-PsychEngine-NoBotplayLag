@@ -1,15 +1,7 @@
 package;
 
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
-import flixel.util.FlxTimer;
-import flixel.sound.FlxSound;
-import flash.media.Sound;
-
+import haxe.Json;
+import openfl.utils.Assets;
 using StringTools;
 
 enum Alignment
@@ -286,52 +278,59 @@ class AlphaCharacter extends FlxSprite
 
 	public var image(default, set):String;
 
-	public static var allLetters:Map<String, Null<Letter>> = [
-		//alphabet
-		'a'  => null, 'b'  => null, 'c'  => null, 'd'  => null, 'e'  => null, 'f'  => null,
-		'g'  => null, 'h'  => null, 'i'  => null, 'j'  => null, 'k'  => null, 'l'  => null,
-		'm'  => null, 'n'  => null, 'o'  => null, 'p'  => null, 'q'  => null, 'r'  => null,
-		's'  => null, 't'  => null, 'u'  => null, 'v'  => null, 'w'  => null, 'x'  => null,
-		'y'  => null, 'z'  => null,
-		
-		//numbers
-		'0'  => null, '1'  => null, '2'  => null, '3'  => null, '4'  => null,
-		'5'  => null, '6'  => null, '7'  => null, '8'  => null, '9'  => null,
+	public static var allLetters:Map<String, Null<Letter>>;
 
-		//symbols
-		'&'  => {offsetsBold: [0, 2]},
-		'('  => {offsetsBold: [0, 5]},
-		')'  => {offsetsBold: [0, 5]},
-		'*'  => {offsets: [0, 28]},
-		'+'  => {offsets: [0, 7], offsetsBold: [0, -12]},
-		'-'  => {offsets: [0, 16], offsetsBold: [0, -30]},
-		'<'  => {offsetsBold: [0, 4]},
-		'>'  => {offsetsBold: [0, 4]},
-		'\'' => {anim: 'apostrophe', offsets: [0, 32]},
-		'"'  => {anim: 'quote', offsets: [0, 32], offsetsBold: [0, 0]},
-		'!'  => {anim: 'exclamation', offsetsBold: [0, 10]},
-		'?'  => {anim: 'question', offsetsBold: [0, 4]},			//also used for "unknown"
-		'.'  => {anim: 'period', offsetsBold: [0, -44]},
-		'❝'  => {anim: 'start quote', offsets: [0, 24], offsetsBold: [0, -5]},
-		'❞'  => {anim: 'end quote', offsets: [0, 24], offsetsBold: [0, -5]},
+	public static function loadAlphabetData(request:String = 'alphabet')
+	{
+		var path:String = Paths.getPath('images/$request.json');
+		#if MODS_ALLOWED
+		if(!FileSystem.exists(path))
+		#else
+		if(!Assets.exists(path, TEXT))
+		#end
+			path = Paths.getPath('images/alphabet.json');
 
-		//symbols with no bold
-		'_'  => null,
-		'#'  => null,
-		'$'  => null,
-		'%'  => null,
-		':'  => {offsets: [0, 2]},
-		';'  => {offsets: [0, -2]},
-		'@'  => null,
-		'['  => null,
-		']'  => {offsets: [0, -1]},
-		'^'  => {offsets: [0, 28]},
-		','  => {anim: 'comma', offsets: [0, -6]},
-		'\\' => {anim: 'back slash', offsets: [0, 0]},
-		'/'  => {anim: 'forward slash', offsets: [0, 0]},
-		'|'  => null,
-		'~'  => {offsets: [0, 16]}
-	];
+		allLetters = new Map<String, Null<Letter>>();
+		try
+		{
+			#if MODS_ALLOWED
+			var data:Dynamic = Json.parse(File.getContent(path));
+			#else
+			var data:Dynamic = Json.parse(Assets.getText(path));
+			#end
+
+			if(data.allowed != null && data.allowed.length > 0)
+			{
+				for (i in 0...data.allowed.length)
+				{
+					var char:String = data.allowed.charAt(i);
+					if(char == ' ') continue;
+					
+					allLetters.set(char.toLowerCase(), null); //Allows character to be used in Alphabet
+				}
+			}
+
+			if(data.characters != null)
+			{
+				for (char in Reflect.fields(data.characters))
+				{
+					var letterData = Reflect.field(data.characters, char);
+					var character:String = char.toLowerCase().substr(0, 1);
+					if((letterData.animation != null || letterData.normal != null || letterData.bold != null) && allLetters.exists(character))
+						allLetters.set(character, {anim: letterData.animation, offsets: letterData.normal, offsetsBold: letterData.bold});
+				}
+			}
+			trace('Reloaded letters successfully ($path)!');
+		}
+		catch(e:Dynamic)
+		{
+			FlxG.log.error('Error on loading alphabet data: $e');
+			trace('Error on loading alphabet data: $e');
+		}
+
+		if(!allLetters.exists('?'))
+			allLetters.set('?', {anim: 'question'});
+	}
 
 	var parent:Alphabet;
 	public var alignOffset:Float = 0; //Don't change this
@@ -346,7 +345,7 @@ class AlphaCharacter extends FlxSprite
 		image = 'alphabet';
 		antialiasing = ClientPrefs.globalAntialiasing;
 	}
-
+	
 	public var curLetter:Letter = null;
 	public function setupAlphaCharacter(x:Float, y:Float, ?character:String = null, ?bold:Null<Bool> = null)
 	{

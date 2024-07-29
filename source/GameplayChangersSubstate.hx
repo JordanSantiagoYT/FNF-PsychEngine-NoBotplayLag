@@ -235,8 +235,8 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 				optionText.snapToPosition();
 				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX -= 32;
-				checkbox.offsetY = -120;
+				checkbox.offsetX -= 20;
+				checkbox.offsetY = -52;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			} else {
@@ -538,7 +538,6 @@ class GameplayOption
 	// Bool will use checkboxes
 	// Everything else will use a text
 
-	public var showBoyfriend:Bool = false;
 	public var scrollSpeed:Float = 50; //Only works on int/float, defines how fast it scrolls per second while holding left/right
 
 	private var variable:String = null; //Variable from ClientPrefs.hx's gameplaySettings
