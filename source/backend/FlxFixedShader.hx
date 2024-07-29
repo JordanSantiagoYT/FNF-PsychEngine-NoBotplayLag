@@ -1,4 +1,4 @@
-package;
+package backend;
 
 import openfl.display3D.Program3D;
 import flixel.system.FlxAssets.FlxShader;

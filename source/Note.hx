@@ -335,7 +335,7 @@ class Note extends FlxSprite
 	{
 		var center:Float = myStrum.y + offsetY + Note.swagWidth / 2;
 		if(isSustainNote && (mustPress || !ignoreNote) &&
-			(!mustPress || (wasGoodHit || (prevNote.wasGoodHit && !canBeHit))))
+			(!mustPress || (wasGoodHit || !canBeHit)))
 		{
 			var swagRect:FlxRect = clipRect;
 			if(swagRect == null) swagRect = new FlxRect(0, 0, frameWidth, frameHeight);

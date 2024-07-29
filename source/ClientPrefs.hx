@@ -327,7 +327,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 				if(keyBinds.exists(control)) keyBinds.set(control, keys);
 			}
 		}
-		reloadControls();
+		reloadVolumeKeys();
 	}
 
 	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic {
@@ -342,9 +342,9 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	}
 	public static function toggleVolumeKeys(turnOn:Bool = true) {
 		final emptyArray:Array<FlxKey> = [];
-		FlxG.sound.muteKeys = turnOn ? Main.muteKeys : emptyArray;
-		FlxG.sound.volumeDownKeys = turnOn ? Main.volumeDownKeys : emptyArray;
-		FlxG.sound.volumeUpKeys = turnOn ? Main.volumeUpKeys : emptyArray;
+		FlxG.sound.muteKeys = turnOn ? TitleState.muteKeys : emptyArray;
+		FlxG.sound.volumeDownKeys = turnOn ? TitleState.volumeDownKeys : emptyArray;
+		FlxG.sound.volumeUpKeys = turnOn ? TitleState.volumeUpKeys : emptyArray;
 	}
 
 	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey> {
