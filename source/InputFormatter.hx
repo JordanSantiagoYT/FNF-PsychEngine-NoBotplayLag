@@ -1,4 +1,4 @@
-package source;
+package;
 
 import flixel.input.keyboard.FlxKey;
 
