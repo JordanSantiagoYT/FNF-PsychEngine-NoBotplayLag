@@ -1,14 +1,11 @@
 package;
 
-import flixel.FlxG;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
-import flixel.graphics.FlxGraphic;
 import Controls;
 
 class ClientPrefs { //default settings if it can't find a save file containing your current settings
 	//Gameplay Settings
-	public static var controllerMode:Bool = false;
 	public static var downScroll:Bool = false;
 	public static var middleScroll:Bool = false;
 	public static var opponentStrums:Bool = true;
@@ -211,7 +208,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		'note_down'		=> [S, DOWN],
 		'note_up'		=> [W, UP],
 		'note_right'	=> [D, RIGHT],
-		'bot_energy'	=> [CONTROL, NONE],
+		'bot_energy'	=> [CONTROL],
 		
 		'ui_left'		=> [A, LEFT],
 		'ui_down'		=> [S, DOWN],
@@ -221,15 +218,15 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		'accept'		=> [SPACE, ENTER],
 		'back'			=> [BACKSPACE, ESCAPE],
 		'pause'			=> [ENTER, ESCAPE],
-		'reset'			=> [R, NONE],
+		'reset'			=> [R],
 		
-		'volume_mute'	=> [ZERO, NONE],
+		'volume_mute'	=> [ZERO],
 		'volume_up'		=> [NUMPADPLUS, PLUS],
 		'volume_down'	=> [NUMPADMINUS, MINUS],
 		
-		'debug_1'		=> [SEVEN, NONE],
-		'debug_2'		=> [EIGHT, NONE],
-		'qt_taunt'		=> [SPACE, NONE]
+		'debug_1'		=> [SEVEN],
+		'debug_2'		=> [EIGHT],
+		'qt_taunt'		=> [SPACE]
 	];
 	public static var defaultKeys:Map<String, Array<FlxKey>> = null;
 	
@@ -240,9 +237,20 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		"loadBlackList" => ["keyBinds", "defaultKeys"],
 	];
 
+	public static function resetKeys(controller:Null<Bool> = null) //Null = both, False = Keyboard, True = Controller
+	{
+		for (key in keyBinds.keys())
+			if(defaultKeys.exists(key))
+				keyBinds.set(key, defaultKeys.get(key).copy());
+	}
+
+	public static function clearInvalidKeys(key:String)
+	{
+		var keyBind:Array<FlxKey> = keyBinds.get(key);
+		while(keyBind != null && keyBind.contains(NONE)) keyBind.remove(NONE);
+	}
 	public static function loadDefaultKeys() {
 		defaultKeys = keyBinds.copy();
-		//trace(defaultKeys);
 	}
 
 	public static function saveSettings() { //changes settings when you exit so that it doesn't reset every time you close the game
@@ -316,26 +324,29 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 			var loadedControls:Map<String, Array<FlxKey>> = save.data.customControls;
 			for (control => keys in loadedControls)
 			{
-				keyBinds.set(control, keys);
+				if(keyBinds.exists(control)) keyBinds.set(control, keys);
 			}
-			reloadControls();
 		}
+		reloadControls();
 	}
 
 	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic {
-		return /*PlayState.isStoryMode ? defaultValue : */ (gameplaySettings.exists(name) ? gameplaySettings.get(name) : defaultValue);
+		return gameplaySettings.exists(name) ? gameplaySettings.get(name) : defaultValue;
 	}
 
-	public static function reloadControls() {
-		PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Solo);
-
-		TitleState.muteKeys = copyKey(keyBinds.get('volume_mute'));
-		TitleState.volumeDownKeys = copyKey(keyBinds.get('volume_down'));
-		TitleState.volumeUpKeys = copyKey(keyBinds.get('volume_up'));
-		FlxG.sound.muteKeys = TitleState.muteKeys;
-		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
-		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
+	public static function reloadVolumeKeys() {
+		Main.muteKeys = keyBinds.get('volume_mute').copy();
+		Main.volumeDownKeys = keyBinds.get('volume_down').copy();
+		Main.volumeUpKeys = keyBinds.get('volume_up').copy();
+		toggleVolumeKeys();
 	}
+	public static function toggleVolumeKeys(turnOn:Bool = true) {
+		final emptyArray:Array<FlxKey> = [];
+		FlxG.sound.muteKeys = turnOn ? Main.muteKeys : emptyArray;
+		FlxG.sound.volumeDownKeys = turnOn ? Main.volumeDownKeys : emptyArray;
+		FlxG.sound.volumeUpKeys = turnOn ? Main.volumeUpKeys : emptyArray;
+	}
+
 	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey> {
 		var copiedArray:Array<FlxKey> = arrayToCopy.copy();
 		var i:Int = 0;

@@ -110,11 +110,7 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		super.create();
 
-		FlxG.save.bind('funkin', CoolUtil.getSavePath());
-
-		ClientPrefs.loadPrefs();
-
-		#if (CHECK_FOR_UPDATES)
+		#if CHECK_FOR_UPDATES
 		if(ClientPrefs.checkForUpdates && !closedState) {
 			trace('checking for update');
 			var http = new haxe.Http("https://raw.githubusercontent.com/JordanSantiagoYT/FNF-JS-Engine/main/THECHANGELOG.md");
@@ -147,8 +143,6 @@ class TitleState extends MusicBeatState
 			http.request();
 		}
 		#end
-
-		Highscore.load();
 
 		// IGNORE THIS!!!
 		titleJSON = Json.parse(Paths.getTextFromFile('images/gfDanceTitle.json'));
@@ -501,7 +495,6 @@ class TitleState extends MusicBeatState
 					#if PSYCH_WATERMARKS
 					addMoreText('Shadow Mario', 15);
 					addMoreText('RiverOaken', 15);
-					addMoreText('shubs', 15);
 					addMoreText('Jordan Santiago', 15);
 					#else
 					addMoreText('present');

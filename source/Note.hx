@@ -297,22 +297,29 @@ class Note extends FlxSprite
 
 			updateHitbox();
 		}
-			
-		distance = (0.45 * (Conductor.songPosition - strumTime) * songSpeed * multSpeed);
-		if (!ClientPrefs.downScroll) distance *= -1;
 
+		var strumX:Float = strum.x;
+		var strumY:Float = strum.y;
+		var strumAngle:Float = strum.angle;
+		var strumAlpha:Float = strum.alpha;
+		var strumDirection:Float = strum.direction;
+
+		distance = (0.45 * (Conductor.songPosition - strumTime) * songSpeed * multSpeed);
+		if (!strum.downScroll) distance *= -1;
+
+		var angleDir = strumDirection * Math.PI / 180;
 		if (copyAngle)
-			angle = strum.direction - 90 + strum.angle + offsetAngle;
+			angle = strumDirection - 90 + strumAngle + offsetAngle;
 
 		if(copyAlpha)
-			alpha = strum.alpha * multAlpha;
+			alpha = strumAlpha * multAlpha;
 
 		if(copyX)
-			x = strum.x + offsetX + Math.cos(strum.direction * Math.PI / 180) * distance;
+			x = strumX + offsetX + Math.cos(angleDir) * distance;
 
 		if(copyY)
 		{
-			y = strum.y + offsetY + (!isSustainNote || ClientPrefs.downScroll ? 0 : 55) + Math.sin(strum.direction * Math.PI / 180) * distance;
+			y = strumY + offsetY + (!isSustainNote || ClientPrefs.downScroll ? 0 : 55) + Math.sin(angleDir) * distance;
 			if(strum.downScroll && isSustainNote)
 			{
 				if(PlayState.isPixelStage)
@@ -326,11 +333,12 @@ class Note extends FlxSprite
 
 	public function clipToStrumNote(myStrum:StrumNote)
 	{
-		final center:Float = myStrum.y + offsetY + Note.swagWidth / 2;
+		var center:Float = myStrum.y + offsetY + Note.swagWidth / 2;
 		if(isSustainNote && (mustPress || !ignoreNote) &&
-			(!mustPress || (wasGoodHit || !canBeHit)))
+			(!mustPress || (wasGoodHit || (prevNote.wasGoodHit && !canBeHit))))
 		{
-			final swagRect:FlxRect = clipRect != null ? clipRect : new FlxRect(0, 0, frameWidth, frameHeight);
+			var swagRect:FlxRect = clipRect;
+			if(swagRect == null) swagRect = new FlxRect(0, 0, frameWidth, frameHeight);
 
 			if (myStrum.downScroll)
 			{
@@ -349,6 +357,17 @@ class Note extends FlxSprite
 			}
 			clipRect = swagRect;
 		}
+	}
+
+	@:noCompletion
+	override function set_clipRect(rect:FlxRect):FlxRect
+	{
+		clipRect = rect;
+
+		if (frames != null)
+			frame = frames.frames[animation.frameIndex];
+
+		return rect;
 	}
 	public function updateRGBColors() {
 		if (!ClientPrefs.enableColorShader)

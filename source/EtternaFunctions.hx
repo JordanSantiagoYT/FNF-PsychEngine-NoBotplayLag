@@ -38,28 +38,6 @@ class EtternaFunctions
         return notes;
     }
 
-    public static function getHolds():Int
-        {
-            var notes:Int = 0;
-            for (i in 0...PlayState.SONG.notes.length) 
-            {
-                trace(PlayState.SONG.notes[i]);
-                for (ii in 0...PlayState.SONG.notes[i].sectionNotes.length)
-                {
-                    var n = PlayState.SONG.notes[i].sectionNotes[ii];
-                    trace(n);
-                    if (n[1] > 0)
-                        notes++;
-                }
-            }
-            return notes;
-        }
-
-    public static function getMapMaxScore():Int
-    {
-        return (getNotes() * 350); //its 350 instead of 500 so that its fair even if you turn off marvelous judgements
-    }
-
     public static function wife3(maxms:Float, ts:Float)
     {
         var max_points = 1.0;

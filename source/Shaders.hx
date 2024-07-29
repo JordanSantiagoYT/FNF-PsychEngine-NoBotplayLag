@@ -3,7 +3,6 @@ package;
 // STOLEN FROM HAXEFLIXEL DEMO LOL
 import flixel.system.FlxAssets.FlxShader;
 import openfl.display.BitmapData;
-import backend.FlxFixedShader;
 import openfl.display.ShaderInput;
 import flixel.FlxG;
 import openfl.Lib;
@@ -950,40 +949,7 @@ void main()
 	
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-/*STOLE FROM DAVE AND BAMBI
-
-I LOVE BANUUU I LOVE BANUUU
-   ________
-  /        \
-_/__________\_
- ||  o||  o||
- |//--  --//|
-  \____O___/
-   |      |
-   |______|
-   |   |  |
-   |___|__|
-    
-
-*/
-
-
-
-
-
-
+//STOLE FROM DAVE AND BAMBI
 class GlitchEffect extends Effect
 {
     public var shader:GlitchShader = new GlitchShader();
@@ -1220,15 +1186,10 @@ class GlitchShader extends FlxShader
 
     vec2 sineWave(vec2 pt)
     {
-        float x = 0.0;
-        float y = 0.0;
-        
-        float offsetX = sin(pt.y * uFrequency + uTime * uSpeed) * (uWaveAmplitude / pt.x * pt.y);
-        float offsetY = sin(pt.x * uFrequency - uTime * uSpeed) * (uWaveAmplitude / pt.y * pt.x);
-        pt.x += offsetX; // * (pt.y - 1.0); // <- Uncomment to stop bottom part of the screen from moving
-        pt.y += offsetY;
+        pt.x += sin(pt.y * uFrequency + uTime * uSpeed) * (uWaveAmplitude / pt.x * pt.y);
+        pt.y += sin(pt.x * uFrequency - uTime * uSpeed) * (uWaveAmplitude / pt.y * pt.x);
 
-        return vec2(pt.x + x, pt.y + y);
+        return vec2(pt.x, pt.y);
     }
 
     void main()
@@ -1250,8 +1211,7 @@ class InvertShader extends FlxShader
     
     vec4 sineWave(vec4 pt)
     {
-	
-	return vec4(1.0 - pt.x, 1.0 - pt.y, 1.0 - pt.z, pt.w);
+	    return vec4(1.0 - pt.x, 1.0 - pt.y, 1.0 - pt.z, pt.w);
     }
 
     void main()
@@ -1295,15 +1255,9 @@ class DistortBGShader extends FlxShader
 
     vec2 sineWave(vec2 pt)
     {
-        float x = 0.0;
-        float y = 0.0;
-        
-        float offsetX = sin(pt.x * uFrequency + uTime * uSpeed) * (uWaveAmplitude / pt.x * pt.y);
-        float offsetY = sin(pt.y * uFrequency - uTime * uSpeed) * (uWaveAmplitude);
-        pt.x += offsetX; // * (pt.y - 1.0); // <- Uncomment to stop bottom part of the screen from moving
-        pt.y += offsetY;
-
-        return vec2(pt.x + x, pt.y + y);
+        pt.x += sin(pt.x * uFrequency + uTime * uSpeed) * (uWaveAmplitude / pt.x * pt.y);
+        pt.y += sin(pt.y * uFrequency - uTime * uSpeed) * (uWaveAmplitude);
+        return vec2(pt.x, pt.y);
     }
 
     vec4 makeBlack(vec4 pt)
@@ -1324,7 +1278,7 @@ class DistortBGShader extends FlxShader
 }
 
 
-class PulseShader extends FlxFixedShader
+class PulseShader extends backend.FlxFixedShader
 {
     @:glFragmentSource('
     #pragma header

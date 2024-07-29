@@ -1,4 +1,5 @@
-import flixel.FlxG;
+package source;
+
 import flixel.input.keyboard.FlxKey;
 
 using StringTools;
@@ -89,9 +90,12 @@ class InputFormatter {
 			case NONE:
 				return '---';
 			default:
-				var label:String = '' + key;
+				var label:String = Std.string(key);
 				if(label.toLowerCase() == 'null') return '---';
-				return '' + label.charAt(0).toUpperCase() + label.substr(1).toLowerCase();
+
+				var arr:Array<String> = label.split('_');
+				for (i in 0...arr.length) arr[i] = CoolUtil.capitalize(arr[i]);
+				return arr.join(' ');
 		}
 	}
 }

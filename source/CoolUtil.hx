@@ -58,6 +58,9 @@ class CoolUtil
 		return (m / snap);
 	}
 
+	inline public static function capitalize(text:String)
+		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
+
 	#if desktop
 	public static var resW:Float = 1;
 	public static var resH:Float = 1;
@@ -463,31 +466,23 @@ class CoolUtil
 		return Math.max(min, Math.min(max, value));
 	}
 
-	public static function coolTextFile(path:String):Array<String>
+	inline public static function coolTextFile(path:String):Array<String>
 	{
-		var daList:Array<String> = [];
-		#if sys
-		if(FileSystem.exists(path)) daList = File.getContent(path).trim().split('\n');
+		var daList:String = null;
+		#if (sys && MODS_ALLOWED)
+		if(FileSystem.exists(path)) daList = File.getContent(path);
 		#else
-		if(Assets.exists(path)) daList = Assets.getText(path).trim().split('\n');
+		if(Assets.exists(path)) daList = Assets.getText(path);
 		#end
-
-		for (i in 0...daList.length)
-		{
-			daList[i] = daList[i].trim();
-		}
-
-		return daList;
+		return daList != null ? listFromString(daList) : [];
 	}
-	public static function listFromString(string:String):Array<String>
+	inline public static function listFromString(string:String):Array<String>
 	{
 		var daList:Array<String> = [];
 		daList = string.trim().split('\n');
 
 		for (i in 0...daList.length)
-		{
 			daList[i] = daList[i].trim();
-		}
 
 		return daList;
 	}
@@ -585,11 +580,6 @@ class CoolUtil
 		return total;
 	}
 
-	/** Quick Function to Fix Save Files for Flixel 5
-		if you are making a mod, you are gonna wanna change "ShadowMario" to something else
-		so Base Psych saves won't conflict with yours
-		@BeastlyGabi
-	**/
 	@:access(flixel.util.FlxSave.validate)
 	inline public static function getSavePath():String {
 		final company:String = FlxG.stage.application.meta.get('company');

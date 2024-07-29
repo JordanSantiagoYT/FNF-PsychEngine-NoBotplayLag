@@ -1254,7 +1254,6 @@ class CharacterEditorState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		if (FlxG.mouse.justPressed) FlxG.sound.play(Paths.sound('click'));
-		MusicBeatState.camBeat = FlxG.camera;
 		if(char.animationsArray[curAnim] != null) {
 			textAnim.text = char.animationsArray[curAnim].anim;
 
