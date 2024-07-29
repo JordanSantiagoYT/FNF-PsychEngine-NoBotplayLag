@@ -288,7 +288,7 @@ class AlphaCharacter extends FlxSprite
 		#else
 		if(!Assets.exists(path, TEXT))
 		#end
-			path = Paths.getPath('images/alphabet.json');
+			path = Paths.getPath('images/alphabet.json', TEXT);
 
 		allLetters = new Map<String, Null<Letter>>();
 		try
