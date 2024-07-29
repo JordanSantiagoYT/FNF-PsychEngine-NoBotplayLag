@@ -335,9 +335,9 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	}
 
 	public static function reloadVolumeKeys() {
-		Main.muteKeys = keyBinds.get('volume_mute').copy();
-		Main.volumeDownKeys = keyBinds.get('volume_down').copy();
-		Main.volumeUpKeys = keyBinds.get('volume_up').copy();
+		TitleState.muteKeys = keyBinds.get('volume_mute').copy();
+		TitleState.volumeDownKeys = keyBinds.get('volume_down').copy();
+		TitleState.volumeUpKeys = keyBinds.get('volume_up').copy();
 		toggleVolumeKeys();
 	}
 	public static function toggleVolumeKeys(turnOn:Bool = true) {

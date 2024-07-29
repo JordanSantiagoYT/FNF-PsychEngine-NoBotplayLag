@@ -1,4 +1,4 @@
-package options;
+package;
 
 #if desktop
 import DiscordClient;
