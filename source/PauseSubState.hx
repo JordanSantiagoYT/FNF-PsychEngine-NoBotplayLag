@@ -3,7 +3,7 @@ package;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxStringUtil;
-import GameplayChangersSubstate;
+import options.GameplayChangersSubstate;
 
 class PauseSubState extends MusicBeatSubstate
 {
