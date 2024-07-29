@@ -237,7 +237,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 		"loadBlackList" => ["keyBinds", "defaultKeys"],
 	];
 
-	public static function resetKeys(controller:Null<Bool> = null) //Null = both, False = Keyboard, True = Controller
+	public static function resetKeys()
 	{
 		for (key in keyBinds.keys())
 			if(defaultKeys.exists(key))

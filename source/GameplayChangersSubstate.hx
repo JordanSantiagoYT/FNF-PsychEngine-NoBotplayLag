@@ -223,16 +223,15 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:Alphabet = new Alphabet(200, 360, optionsArray[i].name, true);
+			var optionText:Alphabet = new Alphabet(150, 360, optionsArray[i].name, true);
 			optionText.isMenuItem = true;
-			optionText.scaleX = 0.8;
-			optionText.scaleY = 0.8;
+			optionText.setScale(0.8);
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == 'bool') {
-				optionText.x += 110;
-				optionText.startPosition.x += 110;
+				optionText.x += 60;
+				optionText.startPosition.x += 60;
 				optionText.snapToPosition();
 				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
 				checkbox.sprTracker = optionText;
@@ -242,7 +241,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 				checkboxGroup.add(checkbox);
 			} else {
 				optionText.snapToPosition();
-				var valueText:AttachedText = new AttachedText(Std.string(optionsArray[i].getValue()), optionText.width, -72, true, 0.8);
+				var valueText:AttachedText = new AttachedText(Std.string(optionsArray[i].getValue()), optionText.width + 40, 0, true, 0.8);
 				valueText.sprTracker = optionText;
 				valueText.copyAlpha = true;
 				valueText.ID = i;

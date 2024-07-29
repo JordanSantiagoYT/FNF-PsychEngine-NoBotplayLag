@@ -61,6 +61,7 @@ class ControlsSubState extends MusicBeatSubstate
 
 	public function new()
 	{
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
 		super();
 
 		#if DISCORD_ALLOWED
@@ -96,11 +97,6 @@ class ControlsSubState extends MusicBeatSubstate
 		add(selectSpr);
 		grpBinds = new FlxTypedGroup<Alphabet>();
 		add(grpBinds);
-
-		var text:Alphabet = new Alphabet(60, 90, 'CTRL', false);
-		text.alignment = CENTERED;
-		text.setScale(0.4);
-		add(text);
 
 		createTexts();
 	}
@@ -228,7 +224,7 @@ class ControlsSubState extends MusicBeatSubstate
 	var timeForMoving:Float = 0.1;
 	override function update(elapsed:Float)
 	{
-		if(timeForMoving > 0) //Fix controller bug
+		if(timeForMoving > 0)
 		{
 			timeForMoving = Math.max(0, timeForMoving - elapsed);
 			super.update(elapsed);

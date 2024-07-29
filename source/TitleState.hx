@@ -55,10 +55,10 @@ class TitleState extends MusicBeatState
 	override public function create():Void
 	{
 		Paths.clearStoredMemory();
+		ClientPrefs.loadPrefs();
 		Paths.clearUnusedMemory();
 
 		MusicBeatState.windowNameSuffix = " - Title Screen";
-
 		MusicBeatState.windowNameSuffix = "";
 
 		FlxG.fixedTimestep = false;

@@ -3245,6 +3245,7 @@ class PlayState extends MusicBeatState
 						ignoreNote: songNotes[3] == 'Hurt Note' && gottaHitNote
 					};
 					if (swagNote.noteskin.length > 0 && !Paths.noteSkinFramesMap.exists(swagNote.noteskin)) inline Paths.initNote(4, swagNote.noteskin);
+					if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
 					if(Std.isOfType(songNotes[3], Bool)) swagNote.animSuffix = (songNotes[3] || section.altAnim ? '-alt' : ''); //Compatibility with charts made by SNIFF
 		
 					if (!noteTypeMap.exists(swagNote.noteType)) {
@@ -3255,10 +3256,9 @@ class PlayState extends MusicBeatState
 				
 					var ratio:Float = Conductor.bpm / currentBPMLol;
 		
-					final floorSus:Int = Math.floor(swagNote.sustainLength / Conductor.stepCrochet);
-					if (floorSus > 0) {
-						for (susNote in 0...floorSus + 1) {
-		
+					final roundSus:Int = Math.round(swagNote.sustainLength / Conductor.stepCrochet);
+					if (roundSus > 0) {
+						for (susNote in 0...roundSus + 1) {
 							final sustainNote:PreloadedChartNote = cast {
 								strumTime: daStrumTime + (Conductor.stepCrochet * susNote),
 								noteData: daNoteData,
@@ -3270,7 +3270,7 @@ class PlayState extends MusicBeatState
 								gfNote: songNotes[3] == 'GF Sing' || (section.gfSection && songNotes[1] < 4),
 								noAnimation: songNotes[3] == 'No Animation',
 								isSustainNote: true,
-								isSustainEnd: susNote == floorSus, 
+								isSustainEnd: susNote == roundSus, 
 								sustainLength: 0,
 								sustainScale: 1 / ratio,
 								parent: swagNote,
