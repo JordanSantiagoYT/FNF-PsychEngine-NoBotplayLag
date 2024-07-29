@@ -1,23 +1,11 @@
 package;
 
 import Conductor.BPMChangeEvent;
-import flixel.FlxG;
-import flixel.addons.ui.FlxUIState;
-import flixel.math.FlxRect;
-import flixel.util.FlxTimer;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.FlxSprite;
 import lime.app.Application;
-import flixel.util.FlxColor;
-import flixel.util.FlxGradient;
-import flixel.FlxState;
-import flixel.FlxCamera;
-import flixel.FlxBasic;
 import backend.PsychCamera;
 
-class MusicBeatState extends FlxUIState
+class MusicBeatState extends flixel.addons.ui.FlxUIState
 {
 	private var curSection:Int = 0;
 	private var stepsToDo:Int = 0;

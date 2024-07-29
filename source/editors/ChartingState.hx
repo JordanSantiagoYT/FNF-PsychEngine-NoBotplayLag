@@ -3823,7 +3823,6 @@ class ChartingState extends MusicBeatState
 			mustHitSection: (_song.notes[curSec] != null ? _song.notes[curSec].mustHitSection : true),
 			gfSection: false,
 			sectionNotes: [],
-			typeOfSection: 0,
 			altAnim: false
 		};
 

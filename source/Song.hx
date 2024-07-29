@@ -74,6 +74,28 @@ class Song
 				}
 			}
 		}
+
+		var sectionsData:Array<SwagSection> = songJson.notes;
+		if(sectionsData == null) return;
+
+		for (section in sectionsData)
+		{
+			var beats:Null<Float> = cast section.sectionBeats;
+			if (beats == null || Math.isNaN(beats))
+			{
+				section.sectionBeats = 4;
+				if(Reflect.hasField(section, 'lengthInSteps')) Reflect.deleteField(section, 'lengthInSteps');
+			}
+
+			for (note in section.sectionNotes)
+			{
+				var gottaHitNote:Bool = (note[1] < 4) ? section.mustHitSection : !section.mustHitSection;
+				note[1] = (note[1] % 4) + (gottaHitNote ? 0 : 4);
+
+				if(note[3] != null && !Std.isOfType(note[3], String))
+					note[3] = editors.ChartingState.noteTypeList[note[3]]; //Backward compatibility + compatibility with Week 7 charts
+			}
+		}
 	}
 
 	public static function hasDifficulty(songName:String, difficulty:String):Bool

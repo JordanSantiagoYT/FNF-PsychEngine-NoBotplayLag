@@ -1,10 +1,7 @@
 package;
 
 import haxe.zip.Entry;
-import haxe.zip.Writer;
-import haxe.Exception;
 import sys.io.File;
-import sys.FileSystem;
 
 using StringTools;
 

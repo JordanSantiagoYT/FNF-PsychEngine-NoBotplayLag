@@ -2,13 +2,12 @@ package;
 
 import flixel.FlxGame;
 import openfl.Lib;
+import openfl.display.Sprite;
 import debug.FPSCounter;
 import lime.app.Application;
 #if desktop
 import DiscordClient;
 #end
-import haxe.io.Input;
-import haxe.io.BytesBuffer;
 import backend.SSPlugin as ScreenShotPlugin;
 // crash handler stuff
 #if CRASH_HANDLER
@@ -31,7 +30,7 @@ using StringTools;
 	#define GAMEMODE_AUTO
 ')
 #end
-class Main extends openfl.display.Sprite {
+class Main extends Sprite {
 	var game = {
 		width: 1280,
 		height: 720,

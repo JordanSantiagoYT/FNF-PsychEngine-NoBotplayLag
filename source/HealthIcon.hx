@@ -1,10 +1,5 @@
 package;
 
-import flixel.math.FlxMath;
-import flixel.FlxSprite;
-import openfl.utils.Assets as OpenFlAssets;
-import flixel.FlxG;
-
 using StringTools;
 
 class HealthIcon extends FlxSprite
