@@ -1,4 +1,4 @@
-package;
+package options;
 
 #if desktop
 import DiscordClient;
@@ -73,7 +73,7 @@ class ControlsSubState extends MusicBeatSubstate
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xff7192fd;
-		bg.antialiasing = ClientPrefs.antialiasing;
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		bg.screenCenter();
 		add(bg);
 
@@ -185,9 +185,7 @@ class ControlsSubState extends MusicBeatSubstate
 			attach.y += FlxG.height * 2;
 			grpBinds.add(attach);
 
-			playstationCheck(attach);
 			attach.scaleX = Math.min(1, 230 / attach.width);
-			//attach.text = key;
 
 			// spawn black bars at the right of the key name
 			var black:AttachedSprite = new AttachedSprite();
@@ -317,7 +315,6 @@ class ControlsSubState extends MusicBeatSubstate
 				holdingEsc = 0;
 				var changed:Bool = false;
 				var curKeys:Array<FlxKey> = ClientPrefs.keyBinds.get(curOption[2]);
-				var curButtons:Array<FlxGamepadInputID> = ClientPrefs.gamepadBinds.get(curOption[2]);
 
 				if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
 				{
