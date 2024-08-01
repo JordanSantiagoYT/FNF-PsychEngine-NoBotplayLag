@@ -131,7 +131,7 @@ class FunkinLua {
 			set('defaultOpponentStrumY' + i, 0);
 		}
 
-		// Default character positions woooo
+		// Default character
 		set('defaultBoyfriendX', game.BF_X);
 		set('defaultBoyfriendY', game.BF_Y);
 		set('defaultOpponentX', game.DAD_X);
@@ -144,7 +144,7 @@ class FunkinLua {
 		set('dadName', PlayState.SONG.player2);
 		set('gfName', PlayState.SONG.gfVersion);
 
-		// Some settings, no jokes
+		// Other settings
 		set('downscroll', ClientPrefs.downScroll);
 		set('middlescroll', ClientPrefs.middleScroll);
 		set('framerate', ClientPrefs.framerate);
@@ -264,6 +264,14 @@ class FunkinLua {
 					if(luaInstance.scriptName == foundScript)
 						return true;
 			return false;
+		});
+
+		Lua_helper.add_callback(lua, "setVar", function(varName:String, value:Dynamic) {
+			PlayState.instance.variables.set(varName, value);
+			return value;
+		});
+		Lua_helper.add_callback(lua, "getVar", function(varName:String) {
+			return PlayState.instance.variables.get(varName);
 		});
 
 		Lua_helper.add_callback(lua, "addLuaScript", function(luaFile:String, ?ignoreAlreadyRunning:Bool = false) { //would be dope asf.
@@ -1471,6 +1479,7 @@ class FunkinLua {
 		if(closed) return LuaUtils.Function_Continue;
 
 		lastCalledFunction = func;
+		lastCalledScript = this;
 		try {
 			if(lua == null) return LuaUtils.Function_Continue;
 
