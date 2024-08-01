@@ -147,8 +147,7 @@
 	<!-- Javascript breaks with inline for reasons unknown -->
 	<haxedef name="no-inline" if="html5"/>
 
-	<!--Disable deprecated warnings-->
-	<haxedef name='no-deprecation-warnings' />
+  	<haxedef name='no-deprecation-warnings' unless="debug" />
 
 	<!-- Disable Discord IO Thread -->
 	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
