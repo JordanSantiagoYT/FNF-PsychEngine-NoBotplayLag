@@ -253,7 +253,7 @@ class FunkinLua {
 			return PlayState.instance.variables.get(varName);
 		});
 		Lua_helper.add_callback(lua, "removeVar", function(varName:String) {
-			return MusicBeatState.getVariables().remove(varName);
+			return PlayState.instance.variables.remove(varName);
 		});
 
 		Lua_helper.add_callback(lua, "addLuaScript", function(luaFile:String, ?ignoreAlreadyRunning:Bool = false) { //would be dope asf.

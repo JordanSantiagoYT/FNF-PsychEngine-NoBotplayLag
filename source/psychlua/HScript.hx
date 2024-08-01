@@ -86,7 +86,7 @@ class HScript
 			else FunkinLua.luaTrace('createCallback ($name): 3rd argument is null', false, false, FlxColor.RED);
 		});
 		#end
-		interp.variables('addHaxeLibrary', function(libName:String, ?libPackage:String = '') {
+		interp.variables.set('addHaxeLibrary', function(libName:String, ?libPackage:String = '') {
 			try {
 				var str:String = '';
 				if(libPackage.length > 0)
