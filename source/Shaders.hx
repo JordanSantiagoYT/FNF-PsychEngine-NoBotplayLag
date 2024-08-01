@@ -7,6 +7,7 @@ import backend.FlxFixedShader;
 import openfl.display.ShaderInput;
 import flixel.FlxG;
 import openfl.Lib;
+
 using StringTools;
 typedef ShaderEffect = {
   var shader:Dynamic;

@@ -3,7 +3,6 @@ package;
 import Section.SwagSection;
 import Song.SwagSong;
 import flixel.FlxObject;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.ui.FlxBar;
 import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
@@ -32,12 +31,6 @@ import Note.PreloadedChartNote;
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
-#end
-
-#if sys
-import sys.io.Process;
-import sys.FileSystem;
-import sys.io.File;
 #end
 
 #if VIDEOS_ALLOWED
@@ -848,8 +841,8 @@ class PlayState extends MusicBeatState
 						new FunkinLua(folder + file);
 						if (Std.string(file) == 'extra keys hscript.lua')
 						{
-						trace ('theres a lua extra keys file');
-						usingEkFile = true;
+							trace ('theres a lua extra keys file');
+							usingEkFile = true;
 						}
 						filesPushed.push(file);
 					}
@@ -871,7 +864,7 @@ class PlayState extends MusicBeatState
 		var achievementMetas = Achievements.getModAchievementMetas().copy();
 		for (i in achievementMetas) {
 			if(i.lua_code != null) {
-				achievementArray.push(new FunkinLua(null, i.lua_code));
+				achievementArray.push(new FunkinLua(i.lua_code));
 			}
 			if(i.week_nomiss != null) {
 				achievementWeeks.push(i.week_nomiss);
@@ -1894,7 +1887,7 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public function initLuaShader(name:String, ?glslVersion:Int = 120)
+	public function initLuaShader(name:String)
 	{
 		if(!ClientPrefs.shaders) return false;
 

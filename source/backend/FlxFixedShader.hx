@@ -1,6 +1,6 @@
 package backend;
-// Stolen from Yoshi Engine, frick yoy
 
+import openfl.display3D.Program3D;
 import flixel.system.FlxAssets.FlxShader;
 
 using StringTools;

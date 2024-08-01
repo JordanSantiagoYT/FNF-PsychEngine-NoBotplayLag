@@ -215,7 +215,7 @@ class LuaUtils
 	
 	public static function addAnimByIndices(obj:String, name:String, prefix:String, indices:Any = null, framerate:Int = 24, loop:Bool = false)
 	{
-		var obj:Dynamic = getObjectDirectly(obj, false);
+		var obj:FlxSprite = cast getObjectDirectly(obj, false);
 		if(obj != null && obj.animation != null)
 		{
 			if(indices == null)
@@ -233,8 +233,9 @@ class LuaUtils
 			obj.animation.addByIndices(name, prefix, indices, '', framerate, loop);
 			if(obj.animation.curAnim == null)
 			{
-				if(obj.playAnim != null) obj.playAnim(name, true);
-				else obj.animation.play(name, true);
+				var dyn:Dynamic = cast obj;
+				if(dyn.playAnim != null) dyn.playAnim(name, true);
+				else dyn.animation.play(name, true);
 			}
 			return true;
 		}
@@ -260,7 +261,6 @@ class LuaUtils
 	}
 
 	public static function resetTextTag(tag:String) {
-		#if LUA_ALLOWED
 		if(!PlayState.instance.modchartTexts.exists(tag)) {
 			return;
 		}
@@ -270,7 +270,6 @@ class LuaUtils
 		PlayState.instance.remove(target, true);
 		target.destroy();
 		PlayState.instance.modchartTexts.remove(tag);
-		#end
 	}
 
 	public static function resetSpriteTag(tag:String) {
@@ -288,32 +287,28 @@ class LuaUtils
 	}
 
 	public static function cancelTween(tag:String) {
-		#if LUA_ALLOWED
 		if(PlayState.instance.modchartTweens.exists(tag)) {
 			PlayState.instance.modchartTweens.get(tag).cancel();
 			PlayState.instance.modchartTweens.get(tag).destroy();
 			PlayState.instance.modchartTweens.remove(tag);
 		}
-		#end
-	}
-
-	public static function tweenPrepare(tag:String, vars:String) {
-		cancelTween(tag);
-		var variables:Array<String> = vars.split('.');
-		var sexyProp:Dynamic = getObjectDirectly(variables[0]);
-		if(variables.length > 1) sexyProp = getVarInArray(getPropertyLoop(variables), variables[variables.length-1]);
-		return sexyProp;
 	}
 
 	public static function cancelTimer(tag:String) {
-		#if LUA_ALLOWED
 		if(PlayState.instance.modchartTimers.exists(tag)) {
 			var theTimer:FlxTimer = PlayState.instance.modchartTimers.get(tag);
 			theTimer.cancel();
 			theTimer.destroy();
 			PlayState.instance.modchartTimers.remove(tag);
 		}
-		#end
+	}
+
+	public static function tweenPrepare(tag:String, vars:String) {
+		if(tag != null) cancelTween(tag);
+		var variables:Array<String> = vars.split('.');
+		var sexyProp:Dynamic = getObjectDirectly(variables[0]);
+		if(variables.length > 1) sexyProp = getVarInArray(getPropertyLoop(variables), variables[variables.length-1]);
+		return sexyProp;
 	}
 
 	public static function getBuildTarget():String
@@ -381,7 +376,7 @@ class LuaUtils
 			case 'sineout': return FlxEase.sineOut;
 			case 'smoothstepin': return FlxEase.smoothStepIn;
 			case 'smoothstepinout': return FlxEase.smoothStepInOut;
-			case 'smoothstepout': return FlxEase.smoothStepInOut;
+			case 'smoothstepout': return FlxEase.smoothStepOut;
 			case 'smootherstepin': return FlxEase.smootherStepIn;
 			case 'smootherstepinout': return FlxEase.smootherStepInOut;
 			case 'smootherstepout': return FlxEase.smootherStepOut;
@@ -425,9 +420,12 @@ class LuaUtils
 
 	public static function cameraFromString(cam:String):FlxCamera {
 		switch(cam.toLowerCase()) {
+			case 'camgame' | 'game': return PlayState.instance.camGame;
 			case 'camhud' | 'hud': return PlayState.instance.camHUD;
 			case 'camother' | 'other': return PlayState.instance.camOther;
 		}
-		return PlayState.instance.camGame;
+		var camera:Dynamic = PlayState.instance.variables.get(cam);
+		if (camera == null || !Std.isOfType(camera, FlxCamera)) camera = PlayState.instance.camGame;
+		return camera;
 	}
 }

@@ -3,9 +3,6 @@
 	<!-- _________________________ Application Settings _________________________ -->
 
 	<app title="Friday Night Funkin': JS Engine" file="JSEngine" packageName="com.JordanSantiago.JSengine" package="com.JordanSantiago.JSengine" main="Main" version="0.2.8" company="JordanSantiago" />
-	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
-		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
-	<!-- <app preloader="Preloader" resizable="true" /> -->
 	<app preloader="flixel.system.FlxPreloader" />
 
 	<!-- ____________________________ Window Settings ___________________________ -->
@@ -105,14 +102,12 @@
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
-
-	<!--In case you want to use the addons package-->
-	<haxelib name="flixel-addons" />
-	<haxelib name="hscript" />
-	<define name="hscriptPos" value="true" if="hscript"/>
-
-	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
+	<haxelib name="flixel-addons" />
+	
+	<!--JS stuff needed-->
+	<haxelib name="hscript" />
+	<haxedef name="hscriptPos" />
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
 	<haxelib name="hxCodec" if="VIDEOS_ALLOWED"/>
 	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED" />
@@ -133,9 +128,6 @@
 	
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
-
-	<!--Enable this for Nape release builds for a serious peformance improvement-->
-	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
 	
 	<!--Used for Izzy Engine's crash handler-->
 	<section if="CRASH_HANDLER">
@@ -147,7 +139,7 @@
 	<!-- Javascript breaks with inline for reasons unknown -->
 	<haxedef name="no-inline" if="html5"/>
 
-  	<haxedef name='no-deprecation-warnings' unless="debug" />
+	<haxedef name='no-deprecation-warnings' unless="debug" />
 
 	<!-- Disable Discord IO Thread -->
 	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
