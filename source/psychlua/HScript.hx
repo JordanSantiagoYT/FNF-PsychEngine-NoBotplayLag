@@ -92,7 +92,7 @@ class HScript
 				if(libPackage.length > 0)
 					str = libPackage + '.';
 
-				set(libName, Type.resolveClass(str + libName));
+				interp.variables.set(libName, Type.resolveClass(str + libName));
 			}
 			catch (e:Dynamic) {
 				var msg:String = e.message.substr(0, e.message.indexOf('\n'));
@@ -100,12 +100,12 @@ class HScript
 				if(parentLua != null)
 				{
 					FunkinLua.lastCalledScript = parentLua;
-					FunkinLua.luaTrace('$origin: ${parentLua.lastCalledFunction} - $msg', false, false, FlxColor.RED);
+					FunkinLua.luaTrace('${parentLua.lastCalledFunction} - $msg', false, false, FlxColor.RED);
 					return;
 				}
 				#end
-				if(PlayState.instance != null) PlayState.instance.addTextToDebug('$origin - $msg', FlxColor.RED);
-				else trace('$origin - $msg');
+				if(PlayState.instance != null) PlayState.instance.addTextToDebug(msg, FlxColor.RED);
+				else trace(msg);
 			}
 		});
 	}
