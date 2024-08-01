@@ -1372,12 +1372,12 @@ class FunkinLua {
 	}
 
 	public function set(variable:String, data:Dynamic) {
-		if(lua == null) {
-			return;
-		}
+		#if LUA_ALLOWED
+		if (lua == null) return;
 
 		Convert.toLua(lua, data);
 		Lua.setglobal(lua, variable);
+		#end
 	}
 
 	public function stop() {
@@ -1451,7 +1451,7 @@ class FunkinLua {
 
 		var result:String = null;
 		Lua.getglobal(lua, variable);
-		result = Convert.fromLua(lua, -1);
+		final result:String = Convert.fromLua(lua, -1);
 		Lua.pop(lua, 1);
 
 		if(result == null) {
@@ -1482,24 +1482,25 @@ class FunkinLua {
 		return null;
 	}
 
-	public function getErrorMessage(status:Int):String {
+	function getErrorMessage(status:Int = 0):String {
 		#if LUA_ALLOWED
 		var v:String = Lua.tostring(lua, -1);
 		Lua.pop(lua, 1);
 
 		if (v != null) v = v.trim();
 		if (v == null || v == "") {
-			switch(status) {
-				case Lua.LUA_ERRRUN: return "Runtime Error";
-				case Lua.LUA_ERRMEM: return "Memory Allocation Error";
-				case Lua.LUA_ERRERR: return "Critical Error";
+			return switch(status) {
+				case Lua.LUA_ERRSYNTAX: "Syntax Error";
+				case Lua.LUA_ERRRUN: "Runtime Error";
+				case Lua.LUA_ERRMEM: "Memory Allocation Error";
+				case Lua.LUA_ERRERR: "Crtical Error";
+				default: "Unknown Error";
 			}
-			return "Unknown Error";
 		}
-
 		return v;
-		#end
+		#else
 		return null;
+		#end
 	}
 
 	public function addLocalCallback(name:String, myFunction:Dynamic)

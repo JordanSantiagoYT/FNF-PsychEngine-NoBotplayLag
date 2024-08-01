@@ -74,6 +74,10 @@ class DialogueCharacter extends FlxSprite
 	{
 		super(x, y);
 
+		//precache sounds
+		Paths.sound('dialogue');
+		Paths.sound('dialogueClose');
+
 		if(character == null) character = DEFAULT_CHARACTER;
 		this.curCharacter = character;
 
