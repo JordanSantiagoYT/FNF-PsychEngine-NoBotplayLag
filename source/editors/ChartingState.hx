@@ -2615,7 +2615,7 @@ class ChartingState extends MusicBeatState
 			}
 
 
-			if (FlxG.keys.justPressed.BACKSPACE) {
+			if (FlxG.keys.justPressed.BACKSPACE && undos.length < 0) {
 				// Protect against lost data when quickly leaving the chart editor.
 				autosaveSong();
 
@@ -2627,6 +2627,9 @@ class ChartingState extends MusicBeatState
 				if (idleMusic != null && idleMusic.music != null) idleMusic.destroy();
 				return;
 			}
+			else if (undos.length > 0) // a shitty way, but the only way I know rn
+				openSubState(new Prompt('WARNING! This action will clear unsaved progress.\n\nProceed?', 0, 
+					function() FlxG.switchState(editors.MasterEditorMenu.new), null,ignoreWarnings));
 
 			if (FlxG.keys.pressed.CONTROL)
 			{
