@@ -1960,7 +1960,7 @@ class PlayState extends MusicBeatState
 		introGo = new FlxSound().loadEmbedded(Paths.sound('introGo' + introSoundsSuffix));
 	}
 
-	public static function formatNumber(number:Float, ?decimals:Bool = false):String //simplified number formatting
+	public static function formatNumber(number:Float):String //simplified number formatting
 	{
 		return (number < 10e11 ? FlxStringUtil.formatMoney(number, false) : CoolUtil.formatCompactNumber(number));
 	}
