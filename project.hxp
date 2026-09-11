@@ -531,14 +531,8 @@ class Project extends HXProject
 		if (HSCRIPT_ALLOWED.isEnabled(this))
 			addHaxelib('hscript'); // Scripting
 
-    // TODO: use haxeui instead of flixel-ui
+    	// TODO: use haxeui instead of flixel-ui
 		addHaxelib('flixel-ui'); // UI framework
-
-    // Maybe TODO?: Port JS Engine to other languages using FireTongue.
-		// addHaxelib('firetongue');
-
-		// Maybe TODO?: Use polymod.
-		// addHaxelib('polymod');
 
 		addHaxelib('grig.audio');
 		addHaxelib('funkin.vis');
