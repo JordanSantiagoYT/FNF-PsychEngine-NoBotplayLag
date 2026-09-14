@@ -1143,7 +1143,7 @@ class FunkinLua {
 			}
 
 			//if it wasn't camGame specifically, THEN.. the actual code
-			var penisExam:Dynamic = tweenShit(tag, vars);
+			var penisExam:Dynamic = tweenPrepare(tag, vars);
 			if(penisExam != null) {
 				if(Std.isOfType(penisExam, FlxCamera)) {
 					PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {zoom: value}, duration / PlayState.instance.playbackRate, {ease: LuaUtils.getFlxEaseByString(ease),
